@@ -1,0 +1,70 @@
+.storyContainer {
+  padding: 20px 0;
+  background: var(--bg);
+  overflow-x: auto;
+  scrollbar-width: none; /* Hide scrollbar Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar IE/Edge */
+}
+
+.storyContainer::-webkit-scrollbar {
+  display: none; /* Hide scrollbar Chrome/Safari */
+}
+
+.storyTrack {
+  display: flex;
+  gap: 20px;
+  padding: 0 20px;
+  min-width: max-content;
+}
+
+.storyItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.storyItem:hover {
+  transform: translateY(-2px);
+}
+
+.imageWrapper {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  padding: 3px;
+  border: 2px solid var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  overflow: hidden;
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.storyItem span {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text);
+  max-width: 80px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .imageWrapper {
+    width: 65px;
+    height: 65px;
+  }
+}
