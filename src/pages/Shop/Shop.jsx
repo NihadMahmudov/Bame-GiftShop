@@ -1,8 +1,11 @@
 import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { Heart, Star, ShoppingCart, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { categories } from '../../data/products';
 import { useProducts } from '../../context/ProductContext';
+import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 import styles from './Shop.module.css';
 
 const sortOptions = [
@@ -14,7 +17,9 @@ const sortOptions = [
 ];
 
 const ProductCard = ({ product }) => {
-  const [wishlisted, setWishlisted] = useState(false);
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const isLiked = isInWishlist(product.id);
 
   return (
     <motion.div
@@ -26,28 +31,30 @@ const ProductCard = ({ product }) => {
       transition={{ duration: 0.25 }}
     >
       <div className={styles.imageWrapper}>
-        <img
-          src={product.img}
-          alt={product.name}
-          loading="lazy"
-          onError={e => {
-            e.target.style.display = 'none';
-            e.target.parentNode.style.background = 'linear-gradient(135deg, #f5f5f5 0%, #e8e0d5 100%)';
-          }}
-        />
+        <Link to={`/product/${product.id}`} target="_blank">
+          <img
+            src={product.img}
+            alt={product.name}
+            loading="lazy"
+            onError={e => {
+              e.target.style.display = 'none';
+              e.target.parentNode.style.background = 'linear-gradient(135deg, #f5f5f5 0%, #e8e0d5 100%)';
+            }}
+          />
+        </Link>
         {product.badge && (
           <span className={`${styles.badge} ${styles[`badge_${product.badge === 'Endirim' ? 'sale' : product.badge === 'Yeni' ? 'new' : 'best'}`]}`}>
             {product.badge}
           </span>
         )}
         <button
-          className={`${styles.wishlistBtn} ${wishlisted ? styles.wishlisted : ''}`}
-          onClick={() => setWishlisted(!wishlisted)}
+          className={`${styles.wishlistBtn} ${isLiked ? styles.wishlisted : ''}`}
+          onClick={() => toggleWishlist(product)}
         >
-          <Heart size={18} fill={wishlisted ? 'currentColor' : 'none'} />
+          <Heart size={18} fill={isLiked ? 'currentColor' : 'none'} color={isLiked ? 'currentColor' : 'var(--text-color)'} />
         </button>
         <div className={styles.quickAdd}>
-          <button className={styles.quickAddBtn}>
+          <button className={styles.quickAddBtn} onClick={() => addToCart(product)}>
             <ShoppingCart size={16} /> Səbətə At
           </button>
         </div>
@@ -55,7 +62,9 @@ const ProductCard = ({ product }) => {
 
       <div className={styles.cardBody}>
         <p className={styles.category}>{categories.find(c => c.id === product.category)?.label}</p>
-        <h3 className={styles.name}>{product.name}</h3>
+        <Link to={`/product/${product.id}`} target="_blank" style={{ textDecoration: 'none' }}>
+          <h3 className={styles.name}>{product.name}</h3>
+        </Link>
         <div className={styles.ratingRow}>
           <div className={styles.stars}>
             {[...Array(5)].map((_, i) => (
@@ -80,7 +89,7 @@ const ProductCard = ({ product }) => {
   );
 };
 
-const Shop = () => {
+const Shop = ({ inPanel = false }) => {
   const { products } = useProducts();
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('default');
@@ -102,17 +111,19 @@ const Shop = () => {
   }, [activeCategory, sortBy]);
 
   return (
-    <div className={styles.shopPage}>
-      {/* Page Header */}
-      <div className={styles.pageHeader}>
-        <div className="container">
-          <p className={styles.breadcrumb}>Ana Səhifə / <span>Kolleksiyalar</span></p>
-          <h1>Bizim Kolleksiyalarımız</h1>
-          <p className={styles.subtitle}>Hər məqsəd üçün mükəmməl hədiyyəni kəşf edin</p>
+    <div className={`${styles.shopPage} ${inPanel ? styles.inPanel : ''}`}>
+      {/* Page Header - Only show if not in user panel */}
+      {!inPanel && (
+        <div className={styles.pageHeader}>
+          <div className="container">
+            <p className={styles.breadcrumb}>Ana Səhifə / <span>Kolleksiyalar</span></p>
+            <h1>Bizim Kolleksiyalarımız</h1>
+            <p className={styles.subtitle}>Hər məqsəd üçün mükəmməl hədiyyəni kəşf edin</p>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className={`container ${styles.shopContainer}`}>
+      <div className={`${inPanel ? '' : 'container'} ${styles.shopContainer}`}>
         {/* Filter + Sort Bar */}
         <div className={styles.toolBar}>
           <div className={styles.categoryFilters}>

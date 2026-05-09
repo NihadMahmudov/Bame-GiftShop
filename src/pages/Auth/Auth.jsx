@@ -28,7 +28,7 @@ const Auth = () => {
     if (userRole === 'admin') {
       navigate('/dashboard');
     } else {
-      navigate('/shop');
+      navigate('/panel');
     }
   };
 

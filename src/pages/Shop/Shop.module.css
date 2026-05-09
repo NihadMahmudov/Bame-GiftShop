@@ -350,3 +350,6 @@
   .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .catBtn { padding: 7px 14px; font-size: 0.8rem; }
 }
+
+.inPanel { padding: 2rem; }
+.inPanel .shopContainer { width: 100%; max-width: 100%; padding: 0; }

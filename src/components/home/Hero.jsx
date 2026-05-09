@@ -1,10 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import styles from './Hero.module.css';
 
 const Hero = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleDiscover = (e) => {
+    e.preventDefault();
+    if (!user) {
+      navigate('/login');
+    } else {
+      navigate('/panel');
+    }
+  };
   return (
     <section className={styles.hero}>
       <div className={styles.heroOverlay}></div>
@@ -44,9 +56,9 @@ const Hero = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-            <Link to="/shop" className={styles.primaryBtn}>
+            <button onClick={handleDiscover} className={styles.primaryBtn}>
               Kolleksiyanı Kəşf Et <ArrowRight size={18} />
-            </Link>
+            </button>
             <button className={styles.secondaryBtn}>
               Haqqımızda
             </button>

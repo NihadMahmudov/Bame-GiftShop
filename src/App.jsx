@@ -13,6 +13,8 @@ import Auth from './pages/Auth/Auth';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Cart from './pages/Cart/Cart';
 import Wishlist from './pages/Wishlist/Wishlist';
+import UserPanel from './pages/UserPanel/UserPanel';
+import ProductDetail from './pages/ProductDetail/ProductDetail';
 
 function App() {
   return (
@@ -27,6 +29,10 @@ function App() {
 
                 {/* Dashboard — öz dizaynı var (Navbar/Footer yoxdur) */}
                 <Route path="/dashboard" element={<Dashboard />} />
+
+                {/* Panel və Məhsul Detalları — Təmiz mühit (Navbar/Footer-siz) */}
+                <Route path="/panel" element={<UserPanel />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
 
                 {/* Adi səhifələr — Layout ilə */}
                 <Route path="/*" element={

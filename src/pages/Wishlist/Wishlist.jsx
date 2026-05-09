@@ -3,7 +3,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import ProductCard from '../../components/social/ProductFeed/ProductCard';
 import styles from './Wishlist.module.css';
 
-const Wishlist = () => {
+const Wishlist = ({ inPanel = false }) => {
   const { wishlist } = useWishlist();
 
   if (wishlist.length === 0) {
@@ -16,7 +16,7 @@ const Wishlist = () => {
   }
 
   return (
-    <div className={`container ${styles.wishlistContainer}`}>
+    <div className={`${inPanel ? '' : 'container'} ${styles.wishlistContainer} ${inPanel ? styles.inPanel : ''}`}>
       <h1 className={styles.title}>Bəyəndiklərim</h1>
       
       <div className={styles.grid}>

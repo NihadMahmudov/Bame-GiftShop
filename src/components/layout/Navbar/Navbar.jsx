@@ -47,10 +47,6 @@ const Navbar = () => {
             className={({ isActive }) => isActive ? styles.activeLink : ''}>
             Ana Səhifə
           </NavLink>
-          <NavLink to="/shop" onClick={() => setIsMobileMenuOpen(false)}
-            className={({ isActive }) => isActive ? styles.activeLink : ''}>
-            Kolleksiyalar
-          </NavLink>
           <NavLink to="/about" onClick={() => setIsMobileMenuOpen(false)}
             className={({ isActive }) => isActive ? styles.activeLink : ''}>
             Haqqımızda
@@ -83,15 +79,6 @@ const Navbar = () => {
               <User size={18} /> Giriş
             </Link>
           )}
-
-          <Link to="/wishlist" className={styles.cartBtn} aria-label="Wishlist">
-            <Heart size={20} />
-            {wishlist.length > 0 && <span className={styles.cartCount}>{wishlist.length}</span>}
-          </Link>
-          <Link to="/cart" className={styles.cartBtn} aria-label="Cart">
-            <ShoppingBag size={20} />
-            <span className={styles.cartCount}>{cartItemCount}</span>
-          </Link>
         </div>
       </div>
     </nav>

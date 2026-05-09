@@ -3,7 +3,7 @@ import { useCart } from '../../context/CartContext';
 import { Trash2, Minus, Plus } from 'lucide-react';
 import styles from './Cart.module.css';
 
-const Cart = () => {
+const Cart = ({ inPanel = false }) => {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart();
 
   const handleCheckout = () => {
@@ -21,7 +21,7 @@ const Cart = () => {
   }
 
   return (
-    <div className={`container ${styles.cartContainer}`}>
+    <div className={`${inPanel ? '' : 'container'} ${styles.cartContainer} ${inPanel ? styles.inPanel : ''}`}>
       <h1 className={styles.title}>Səbət</h1>
       
       <div className={styles.cartContent}>
