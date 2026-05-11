@@ -17,7 +17,7 @@
 }
 
 .backBtn:hover {
-  color: var(--primary-color);
+  color: var(--primary);
 }
 
 .productGrid {
@@ -50,7 +50,7 @@
   position: absolute;
   top: 20px;
   left: 20px;
-  background: var(--primary-color);
+  background: var(--primary);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 50px;
@@ -65,7 +65,7 @@
 
 .category {
   text-transform: uppercase;
-  color: var(--primary-color);
+  color: var(--primary);
   font-weight: 700;
   letter-spacing: 1px;
   font-size: 0.85rem;
@@ -148,7 +148,7 @@
 }
 
 .quantity button:hover {
-  background: var(--primary-color);
+  background: var(--primary);
   color: white;
 }
 
@@ -161,9 +161,9 @@
 .addToCart {
   flex: 1;
   height: 55px;
-  background: var(--secondary-color);
-  color: white;
-  border: none;
+  background: white;
+  color: var(--secondary);
+  border: 2px solid var(--secondary);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -172,11 +172,40 @@
   font-weight: 700;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s;
 }
 
 .addToCart:hover {
-  background: var(--text-color);
+  background: rgba(26, 26, 26, 0.05);
+}
+
+.added {
+  background: var(--success) !important;
+  color: white !important;
+  border-color: var(--success) !important;
+}
+
+.orderNow {
+  flex: 1.5;
+  height: 55px;
+  background: var(--secondary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.orderNow:hover {
+  background: var(--primary);
+  color: var(--secondary);
+  transform: translateY(-2px);
 }
 
 .wishlist {
@@ -241,6 +270,7 @@
   .title {
     font-size: 1.8rem;
   }
+
   .actions {
     flex-direction: column;
     align-items: stretch;

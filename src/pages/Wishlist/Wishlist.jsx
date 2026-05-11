@@ -1,6 +1,6 @@
 import React from 'react';
 import { useWishlist } from '../../context/WishlistContext';
-import ProductCard from '../../components/social/ProductFeed/ProductCard';
+import ProductCard from '../../components/common/ProductCard/ProductCard';
 import styles from './Wishlist.module.css';
 
 const Wishlist = ({ inPanel = false }) => {
@@ -18,7 +18,7 @@ const Wishlist = ({ inPanel = false }) => {
   return (
     <div className={`${inPanel ? '' : 'container'} ${styles.wishlistContainer} ${inPanel ? styles.inPanel : ''}`}>
       <h1 className={styles.title}>Bəyəndiklərim</h1>
-      
+
       <div className={styles.grid}>
         {wishlist.map(product => (
           <ProductCard key={product.id} product={product} />

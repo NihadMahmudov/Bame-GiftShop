@@ -24,7 +24,7 @@ const Auth = () => {
       const loggedUser = login(form.email);
       userRole = loggedUser.role;
     }
-    
+
     if (userRole === 'admin') {
       navigate('/dashboard');
     } else {
@@ -146,6 +146,21 @@ const Auth = () => {
 
               <button type="submit" className={styles.submitBtn}>
                 {mode === 'login' ? 'Daxil Ol' : 'Qeydiyyatdan Keç'}
+              </button>
+
+              <div className={styles.divider}>
+                <span>və ya</span>
+              </div>
+
+              <button
+                type="button"
+                className={styles.demoBtn}
+                onClick={() => {
+                  login('qonaq@bame.az');
+                  navigate('/panel');
+                }}
+              >
+                Qonaq kimi daxil ol (Sürətli)
               </button>
 
               <p className={styles.switchMode}>

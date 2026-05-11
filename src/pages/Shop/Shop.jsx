@@ -16,78 +16,7 @@ const sortOptions = [
   { value: 'newest', label: 'Ən Yeni' },
 ];
 
-const ProductCard = ({ product }) => {
-  const { addToCart } = useCart();
-  const { toggleWishlist, isInWishlist } = useWishlist();
-  const isLiked = isInWishlist(product.id);
-
-  return (
-    <motion.div
-      className={styles.card}
-      layout
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.25 }}
-    >
-      <div className={styles.imageWrapper}>
-        <Link to={`/product/${product.id}`} target="_blank">
-          <img
-            src={product.img}
-            alt={product.name}
-            loading="lazy"
-            onError={e => {
-              e.target.style.display = 'none';
-              e.target.parentNode.style.background = 'linear-gradient(135deg, #f5f5f5 0%, #e8e0d5 100%)';
-            }}
-          />
-        </Link>
-        {product.badge && (
-          <span className={`${styles.badge} ${styles[`badge_${product.badge === 'Endirim' ? 'sale' : product.badge === 'Yeni' ? 'new' : 'best'}`]}`}>
-            {product.badge}
-          </span>
-        )}
-        <button
-          className={`${styles.wishlistBtn} ${isLiked ? styles.wishlisted : ''}`}
-          onClick={() => toggleWishlist(product)}
-        >
-          <Heart size={18} fill={isLiked ? 'currentColor' : 'none'} color={isLiked ? 'currentColor' : 'var(--text-color)'} />
-        </button>
-        <div className={styles.quickAdd}>
-          <button className={styles.quickAddBtn} onClick={() => addToCart(product)}>
-            <ShoppingCart size={16} /> Səbətə At
-          </button>
-        </div>
-      </div>
-
-      <div className={styles.cardBody}>
-        <p className={styles.category}>{categories.find(c => c.id === product.category)?.label}</p>
-        <Link to={`/product/${product.id}`} target="_blank" style={{ textDecoration: 'none' }}>
-          <h3 className={styles.name}>{product.name}</h3>
-        </Link>
-        <div className={styles.ratingRow}>
-          <div className={styles.stars}>
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                size={13}
-                fill={i < Math.floor(product.rating) ? 'var(--primary)' : 'none'}
-                color={i < Math.floor(product.rating) ? 'var(--primary)' : '#ccc'}
-              />
-            ))}
-          </div>
-          <span className={styles.reviewCount}>({product.reviews})</span>
-        </div>
-        <div className={styles.priceRow}>
-          <span className={styles.price}>{product.price} AZN</span>
-          {product.oldPrice && (
-            <span className={styles.oldPrice}>{product.oldPrice} AZN</span>
-          )}
-        </div>
-      </div>
-    </motion.div>
-  );
-};
+import ProductCard from '../../components/common/ProductCard/ProductCard';
 
 const Shop = ({ inPanel = false }) => {
   const { products } = useProducts();

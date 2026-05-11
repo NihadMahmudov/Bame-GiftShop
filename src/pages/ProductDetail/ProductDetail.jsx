@@ -12,9 +12,21 @@ const ProductDetail = () => {
   const { products } = useProducts();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
-  
+
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
+
+  const handleAddToCart = () => {
+    addToCart({ ...product, quantity });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
+
+  const handleOrderNow = () => {
+    addToCart({ ...product, quantity });
+    navigate('/cart');
+  };
 
   useEffect(() => {
     const foundProduct = products.find(p => p.id === parseInt(id));
@@ -53,11 +65,11 @@ const ProductDetail = () => {
         <div className={styles.infoSection}>
           <p className={styles.category}>{product.category}</p>
           <h1 className={styles.title}>{product.name}</h1>
-          
+
           <div className={styles.ratingRow}>
             <div className={styles.stars}>
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={16} fill={i < 5 ? "var(--primary-color)" : "none"} color="var(--primary-color)" />
+                <Star key={i} size={16} fill={i < 5 ? "var(--primary)" : "none"} color="var(--primary)" />
               ))}
             </div>
             <span className={styles.reviews}>(24 Rəy)</span>
@@ -78,8 +90,15 @@ const ProductDetail = () => {
               <span>{quantity}</span>
               <button onClick={() => setQuantity(quantity + 1)}>+</button>
             </div>
-            <button className={styles.addToCart} onClick={() => addToCart({...product, quantity})}>
-              <ShoppingCart size={20} /> Səbətə At
+            <button
+              className={`${styles.addToCart} ${added ? styles.added : ''}`}
+              onClick={handleAddToCart}
+            >
+              <ShoppingCart size={20} />
+              {added ? 'Əlavə edildi!' : 'Səbətə At'}
+            </button>
+            <button className={styles.orderNow} onClick={handleOrderNow}>
+              Sifariş Et
             </button>
             <button className={`${styles.wishlist} ${isLiked ? styles.active : ''}`} onClick={() => toggleWishlist(product)}>
               <Heart size={24} fill={isLiked ? "var(--error)" : "none"} color={isLiked ? "var(--error)" : "currentColor"} />
