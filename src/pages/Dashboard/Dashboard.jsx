@@ -2,26 +2,35 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, PlusCircle, Trash2,
-  LogOut, Store, TrendingUp, ShoppingBag, Eye
+  LogOut, Store, TrendingUp, ShoppingBag, Eye, ImagePlus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useProducts } from '../../context/ProductContext';
+import { useOrders } from '../../context/OrderContext';
 import { categories } from '../../data/products';
 import styles from './Dashboard.module.css';
 
-const TABS = ['Məhsullarım', 'Məhsul Əlavə Et'];
+const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Sifarişlər'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { products, addProduct, deleteProduct } = useProducts();
+  const { orders, updateOrderStatus } = useOrders();
   const [activeTab, setActiveTab] = useState('Məhsullarım');
   const [form, setForm] = useState({
     name: '', price: '', oldPrice: '', category: 'decor',
-    img: '', description: ''
+    img: '', description: '', badge: '', collections: []
   });
   const [success, setSuccess] = useState(false);
+
+  const COLLECTION_OPTIONS = [
+    { id: 'flash', label: 'Flaş Məhsullar' },
+    { id: 'bestseller', label: 'Çox Satılanlar' },
+    { id: 'discount', label: 'Endirimli Məhsullar' },
+    { id: 'coupon', label: 'Kuponlu Məhsullar' }
+  ];
 
   // Redirect if not logged in or not admin
   if (!user || user.role !== 'admin') {
@@ -30,6 +39,26 @@ const Dashboard = () => {
   }
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleCollectionChange = (id) => {
+    setForm(prev => ({
+      ...prev,
+      collections: prev.collections.includes(id)
+        ? prev.collections.filter(c => c !== id)
+        : [...prev.collections, id]
+    }));
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm({ ...form, img: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -40,8 +69,11 @@ const Dashboard = () => {
       oldPrice: form.oldPrice ? Number(form.oldPrice) : null,
       category: form.category,
       img: form.img,
+      description: form.description,
+      badge: form.badge,
+      collections: form.collections
     });
-    setForm({ name: '', price: '', oldPrice: '', category: 'decor', img: '', description: '' });
+    setForm({ name: '', price: '', oldPrice: '', category: 'decor', img: '', description: '', badge: '', collections: [] });
     setSuccess(true);
     setTimeout(() => { setSuccess(false); setActiveTab('Məhsullarım'); }, 1500);
   };
@@ -49,7 +81,7 @@ const Dashboard = () => {
   const stats = [
     { label: 'Məhsullarım', value: products.length, icon: <Package size={22} />, color: '#D4AF37' },
     { label: 'Ümumi Baxış', value: '1,248', icon: <Eye size={22} />, color: '#2A9D8F' },
-    { label: 'Sifarişlər', value: '24', icon: <ShoppingBag size={22} />, color: '#E63946' },
+    { label: 'Sifarişlər', value: orders.length, icon: <ShoppingBag size={22} />, color: '#E63946' },
     { label: 'Trend', value: '+12%', icon: <TrendingUp size={22} />, color: '#4361ee' },
   ];
 
@@ -76,7 +108,7 @@ const Dashboard = () => {
               className={`${styles.navItem} ${activeTab === tab ? styles.navActive : ''}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === 'Məhsullarım' ? <Package size={18} /> : <PlusCircle size={18} />}
+              {tab === 'Məhsullarım' ? <Package size={18} /> : tab === 'Sifarişlər' ? <ShoppingBag size={18} /> : <PlusCircle size={18} />}
               {tab}
             </button>
           ))}
@@ -155,7 +187,7 @@ const Dashboard = () => {
                   ))}
                 </div>
               </motion.div>
-            ) : (
+            ) : activeTab === 'Məhsul Əlavə Et' ? (
               <motion.div
                 key="add"
                 initial={{ opacity: 0, y: 10 }}
@@ -202,22 +234,96 @@ const Dashboard = () => {
                     </div>
                   </div>
 
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label>Etiket (Badge)</label>
+                      <select name="badge" value={form.badge} onChange={handleChange}>
+                        <option value="">Heç biri</option>
+                        <option value="Yeni">Yeni</option>
+                        <option value="Bestseller">Ən çox satılan</option>
+                        <option value="Endirim">Endirim</option>
+                      </select>
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Məhsulun Təsviri</label>
+                      <input name="description" value={form.description} onChange={handleChange} placeholder="Məhsul haqqında qısa məlumat" />
+                    </div>
+                  </div>
+
                   <div className={styles.formGroup} style={{ gridColumn: '1/-1' }}>
-                    <label>Şəkil URL-i *</label>
-                    <input name="img" value={form.img} onChange={handleChange}
-                      placeholder="https://images.unsplash.com/..." required />
-                    {form.img && (
-                      <div className={styles.imgPreview}>
-                        <img src={form.img} alt="preview"
-                          onError={e => e.target.style.display = 'none'} />
-                      </div>
-                    )}
+                    <label>Xüsusi Kolleksiyalar (Həmin bölmələrə düşməsi üçün seçin)</label>
+                    <div className={styles.collectionsGrid}>
+                      {COLLECTION_OPTIONS.map(opt => (
+                        <label key={opt.id} className={styles.checkboxLabel}>
+                          <input 
+                            type="checkbox" 
+                            checked={form.collections.includes(opt.id)}
+                            onChange={() => handleCollectionChange(opt.id)}
+                          />
+                          <span>{opt.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup} style={{ gridColumn: '1/-1' }}>
+                    <label>Məhsul Şəkli *</label>
+                    <div className={styles.imageUploadBox}>
+                      <input type="file" accept="image/*" onChange={handleImageUpload} required={!form.img} />
+                      {form.img ? (
+                        <img src={form.img} alt="preview" className={styles.imgPreviewFull} />
+                      ) : (
+                        <>
+                          <ImagePlus size={40} className={styles.uploadIcon} />
+                          <div className={styles.uploadText}>Şəkil yükləmək üçün bura tıklayın və ya sürükləyin</div>
+                          <div className={styles.uploadSub}>PNG, JPG, WEBP (maks. 5MB)</div>
+                        </>
+                      )}
+                    </div>
                   </div>
 
                   <button type="submit" className={styles.submitBtn}>
                     <PlusCircle size={18} /> Məhsulu Əlavə Et
                   </button>
                 </form>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="orders"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className={styles.sectionHeader}>
+                  <h2>Bütün Sifarişlər ({orders.length})</h2>
+                </div>
+                <div className={styles.table}>
+                  <div className={styles.tableHeader}>
+                    <span>ID</span>
+                    <span>Müştəri</span>
+                    <span>Məbləğ</span>
+                    <span>Status</span>
+                    <span>Əməliyyat</span>
+                  </div>
+                  {orders.map(o => (
+                    <div key={o.id} className={styles.tableRow}>
+                      <span>#{o.id.slice(-4)}</span>
+                      <span>{o.customerName}</span>
+                      <span className={styles.priceCell}>{o.total} AZN</span>
+                      <span className={styles.statusBadge}>{o.status}</span>
+                      <select 
+                        value={o.status} 
+                        onChange={(e) => updateOrderStatus(o.id, e.target.value)}
+                        className={styles.statusSelect}
+                      >
+                        <option value="pending">Gözləmədə</option>
+                        <option value="approved">Təsdiqləndi</option>
+                        <option value="shipped">Yoldadır</option>
+                        <option value="delivered">Çatdırıldı</option>
+                      </select>
+                    </div>
+                  ))}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

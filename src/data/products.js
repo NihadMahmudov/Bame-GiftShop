@@ -18,6 +18,7 @@ export const products = [
     reviews: 124,
     img: 'https://images.unsplash.com/photo-1635767798638-3e25273a8236?w=600&q=80&auto=format&fit=crop',
     badge: 'Yeni',
+    collections: ['flash', 'new']
   },
   {
     id: 2,
@@ -29,6 +30,7 @@ export const products = [
     reviews: 89,
     img: 'https://images.unsplash.com/photo-1635767798638-3e25273a8236?w=600&q=80&auto=format&fit=crop',
     badge: 'Bestseller',
+    collections: ['bestseller', 'flash']
   },
   {
     id: 3,
@@ -40,6 +42,7 @@ export const products = [
     reviews: 56,
     img: 'https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=600&q=80&auto=format&fit=crop',
     badge: 'Endirim',
+    collections: ['discount', 'coupon']
   },
   {
     id: 4,
@@ -51,6 +54,7 @@ export const products = [
     reviews: 203,
     img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80&auto=format&fit=crop',
     badge: null,
+    collections: ['discount']
   },
   {
     id: 5,
@@ -62,6 +66,7 @@ export const products = [
     reviews: 312,
     img: 'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=600&q=80&auto=format&fit=crop',
     badge: 'Bestseller',
+    collections: ['bestseller', 'coupon']
   },
   {
     id: 6,
@@ -73,6 +78,7 @@ export const products = [
     reviews: 67,
     img: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&q=80&auto=format&fit=crop',
     badge: null,
+    collections: []
   },
   {
     id: 7,
@@ -84,6 +90,7 @@ export const products = [
     reviews: 145,
     img: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=80&auto=format&fit=crop',
     badge: 'Endirim',
+    collections: ['discount', 'flash']
   },
   {
     id: 8,
@@ -95,6 +102,7 @@ export const products = [
     reviews: 98,
     img: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&q=80&auto=format&fit=crop',
     badge: 'Yeni',
+    collections: ['flash']
   },
   {
     id: 9,
@@ -106,6 +114,7 @@ export const products = [
     reviews: 178,
     img: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=600&q=80&auto=format&fit=crop',
     badge: 'Endirim',
+    collections: ['discount', 'coupon']
   },
   {
     id: 10,
@@ -117,6 +126,7 @@ export const products = [
     reviews: 241,
     img: 'https://images.unsplash.com/photo-1635767798638-3e25273a8236?w=600&q=80&auto=format&fit=crop',
     badge: 'Yeni',
+    collections: ['flash', 'coupon']
   },
   {
     id: 11,
@@ -128,6 +138,7 @@ export const products = [
     reviews: 89,
     img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80&auto=format&fit=crop',
     badge: 'Bestseller',
+    collections: ['bestseller', 'coupon']
   },
   {
     id: 12,
@@ -139,5 +150,6 @@ export const products = [
     reviews: 73,
     img: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=600&q=80&auto=format&fit=crop',
     badge: null,
+    collections: ['discount']
   },
 ];

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Star, ShoppingCart } from 'lucide-react';
+import { Heart, Star, ShoppingCart, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useCart } from '../../../context/CartContext';
 import { useWishlist } from '../../../context/WishlistContext';
@@ -10,6 +10,13 @@ const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const isLiked = isInWishlist(product.id);
+  const [added, setAdded] = useState(false);
+
+  const handleAddToCart = () => {
+    addToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
 
   return (
     <motion.div
@@ -44,8 +51,13 @@ const ProductCard = ({ product }) => {
           <Heart size={18} fill={isLiked ? 'currentColor' : 'none'} color={isLiked ? 'currentColor' : '#6b7280'} />
         </button>
         <div className={styles.quickAdd}>
-          <button className={styles.quickAddBtn} onClick={() => addToCart(product)}>
-            <ShoppingCart size={16} /> Səbətə At
+          <button 
+            className={`${styles.quickAddBtn} ${added ? styles.added : ''}`} 
+            onClick={handleAddToCart}
+            style={added ? { backgroundColor: '#10b981', color: 'white' } : {}}
+          >
+            {added ? <Check size={16} /> : <ShoppingCart size={16} />} 
+            {added ? ' Əlavə edildi' : ' Səbətə At'}
           </button>
         </div>
       </div>

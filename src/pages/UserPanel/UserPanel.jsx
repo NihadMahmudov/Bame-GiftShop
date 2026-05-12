@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Store, Heart, ShoppingCart, Search, User as UserIcon, LogOut } from 'lucide-react';
+import { Store, Heart, ShoppingCart, Search, User as UserIcon, LogOut, Package, LayoutGrid } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Shop from '../Shop/Shop';
 import Cart from '../Cart/Cart';
 import Wishlist from '../Wishlist/Wishlist';
+import Orders from '../Orders/Orders';
+import Categories from '../Categories/Categories';
 import styles from './UserPanel.module.css';
 
 const UserPanel = () => {
@@ -19,8 +21,10 @@ const UserPanel = () => {
 
   const TABS = [
     { id: 'kataloq', label: 'Kataloq', icon: <Store size={20} />, count: null },
+    { id: 'categories', label: 'Kateqoriyalar', icon: <LayoutGrid size={20} />, count: null },
     { id: 'wishlist', label: 'Bəyəndiklərim', icon: <Heart size={20} />, count: wishlist.length },
-    { id: 'cart', label: 'Səbətim', icon: <ShoppingCart size={20} />, count: cartItemCount }
+    { id: 'cart', label: 'Səbətim', icon: <ShoppingCart size={20} />, count: cartItemCount },
+    { id: 'orders', label: 'Sifarişlərim', icon: <Package size={20} />, count: null }
   ];
 
   if (!user) {
@@ -82,8 +86,10 @@ const UserPanel = () => {
             className={styles.tabWrapper}
           >
             {activeTab === 'kataloq' && <Shop inPanel={true} />}
+            {activeTab === 'categories' && <Categories inPanel={true} />}
             {activeTab === 'wishlist' && <Wishlist inPanel={true} />}
             {activeTab === 'cart' && <Cart inPanel={true} />}
+            {activeTab === 'orders' && <Orders />}
           </motion.div>
         </AnimatePresence>
       </main>

@@ -1,13 +1,13 @@
 .panelContainer {
   display: flex;
   min-height: calc(100vh - 80px);
-  background: var(--bg-alt);
+  background: var(--bg-offset);
 }
 
 .sidebar {
   width: 280px;
-  background: white;
-  border-right: 1px solid var(--border-color);
+  background: var(--white);
+  border-right: 1px solid var(--bg-offset);
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -19,14 +19,14 @@
   gap: 1rem;
   margin-bottom: 2.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--bg-offset);
 }
 
 .avatar {
   width: 50px;
   height: 50px;
   background: var(--primary-light);
-  color: var(--primary-color);
+  color: var(--primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -35,13 +35,13 @@
 
 .userDetails h3 {
   font-size: 1.1rem;
-  color: var(--text-color);
+  color: var(--text);
   margin-bottom: 0.2rem;
 }
 
 .userDetails p {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--text-light);
 }
 
 .navMenu {
@@ -62,19 +62,19 @@
   cursor: pointer;
   font-size: 1rem;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--text-light);
   transition: all 0.2s;
   text-align: left;
 }
 
 .navItem:hover {
-  background: var(--bg-alt);
-  color: var(--primary-color);
+  background: var(--bg-offset);
+  color: var(--primary);
 }
 
 .navItem.active {
-  background: var(--primary-color);
-  color: white;
+  background: var(--primary);
+  color: var(--white);
 }
 
 .logoutBtn {
@@ -93,12 +93,12 @@
 }
 
 .logoutBtn:hover {
-  background: rgba(220, 53, 69, 0.1);
+  background: rgba(230, 57, 70, 0.1);
 }
 
 .mainContent {
   flex: 1;
-  background: white;
+  background: var(--white);
   overflow-y: auto;
   position: relative;
 }
@@ -114,16 +114,16 @@
   .sidebar {
     width: 100%;
     border-right: none;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--bg-offset);
   }
 }
 
 .navItem { display: flex; justify-content: space-between; align-items: center; }
 .itemMain { display: flex; align-items: center; gap: 1rem; }
-.badge { background: var(--primary-color); color: white; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
-.active .badge { background: white; color: var(--primary-color); }
+.badge { background: var(--primary); color: var(--white); font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+.active .badge { background: var(--white); color: var(--primary); }
 
 .panelContainer { min-height: 100vh; }
 .logo { margin-bottom: 2rem; }
-.logo a { font-size: 1.8rem; font-weight: 900; color: var(--text-color); text-decoration: none; letter-spacing: -1px; }
-.logo span { color: var(--primary-color); }
+.logo a { font-size: 1.8rem; font-weight: 900; color: var(--text); text-decoration: none; letter-spacing: -1px; }
+.logo span { color: var(--primary); }

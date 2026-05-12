@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { Heart, Star, ShoppingCart, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Heart, Star, ShoppingCart, SlidersHorizontal, ChevronDown, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { categories } from '../../data/products';
 import { useProducts } from '../../context/ProductContext';
@@ -20,14 +20,23 @@ import ProductCard from '../../components/common/ProductCard/ProductCard';
 
 const Shop = ({ inPanel = false }) => {
   const { products } = useProducts();
-  const [activeCategory, setActiveCategory] = useState('all');
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const categoryFromUrl = queryParams.get('category') || 'all';
+
+  const [activeCategory, setActiveCategory] = useState(categoryFromUrl);
   const [sortBy, setSortBy] = useState('default');
+  const [searchQuery, setSearchQuery] = useState('');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
 
   const filteredAndSorted = useMemo(() => {
     let result = activeCategory === 'all'
       ? [...products]
       : products.filter(p => p.category === activeCategory);
+
+    if (searchQuery.trim() !== '') {
+      result = result.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    }
 
     switch (sortBy) {
       case 'price-asc': result.sort((a, b) => a.price - b.price); break;
@@ -37,7 +46,7 @@ const Shop = ({ inPanel = false }) => {
       default: break;
     }
     return result;
-  }, [activeCategory, sortBy]);
+  }, [activeCategory, sortBy, searchQuery, products]);
 
   return (
     <div className={`${styles.shopPage} ${inPanel ? styles.inPanel : ''}`}>
@@ -53,19 +62,17 @@ const Shop = ({ inPanel = false }) => {
       )}
 
       <div className={`${inPanel ? '' : 'container'} ${styles.shopContainer}`}>
-        {/* Filter + Sort Bar */}
+        
+        {/* Catalog Header: Search & Sort (Umumi) */}
         <div className={styles.toolBar}>
-          <div className={styles.categoryFilters}>
-            <SlidersHorizontal size={18} className={styles.filterIcon} />
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                className={`${styles.catBtn} ${activeCategory === cat.id ? styles.catActive : ''}`}
-                onClick={() => setActiveCategory(cat.id)}
-              >
-                {cat.label}
-              </button>
-            ))}
+          <div className={styles.searchBox}>
+            <Search size={18} className={styles.searchIcon} />
+            <input 
+              type="text" 
+              placeholder="Minlərlə məhsul arasında axtar..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
 
           <div className={styles.sortWrapper}>
@@ -73,6 +80,7 @@ const Shop = ({ inPanel = false }) => {
               className={styles.sortBtn}
               onClick={() => setShowSortDropdown(!showSortDropdown)}
             >
+              <SlidersHorizontal size={16} />
               {sortOptions.find(s => s.value === sortBy)?.label}
               <ChevronDown size={16} className={showSortDropdown ? styles.rotated : ''} />
             </button>
@@ -92,19 +100,34 @@ const Shop = ({ inPanel = false }) => {
           </div>
         </div>
 
-        {/* Results Count */}
-        <p className={styles.resultCount}>
-          <strong>{filteredAndSorted.length}</strong> məhsul tapıldı
-        </p>
+        {/* Results Info */}
+        <div className={styles.resultInfo}>
+          <p className={styles.resultCount}>
+            {activeCategory !== 'all' && (
+              <span className={styles.activeTag}>
+                {categories.find(c => c.id === activeCategory)?.label}
+                <button onClick={() => setActiveCategory('all')}>×</button>
+              </span>
+            )}
+            <strong>{filteredAndSorted.length}</strong> məhsul tapıldı
+          </p>
+        </div>
 
         {/* Product Grid */}
         <motion.div layout className={styles.grid}>
           <AnimatePresence>
-            {filteredAndSorted.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {filteredAndSorted.length > 0 ? (
+              filteredAndSorted.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <p style={{ textAlign: 'center', padding: '40px', color: '#888', gridColumn: '1/-1' }}>
+                Bu kateqoriyada məhsul tapılmadı.
+              </p>
+            )}
           </AnimatePresence>
         </motion.div>
+
       </div>
     </div>
   );

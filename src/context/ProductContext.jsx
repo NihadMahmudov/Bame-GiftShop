@@ -19,7 +19,8 @@ export const ProductProvider = ({ children }) => {
       id: Date.now(),
       rating: 5.0,
       reviews: 0,
-      badge: 'Yeni',
+      badge: product.badge || 'Yeni',
+      collections: product.collections || []
     };
     setProducts(prev => [newProduct, ...prev]);
     return newProduct;

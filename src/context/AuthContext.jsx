@@ -8,7 +8,15 @@ export const AuthProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : null;
   });
 
-  const ADMIN_EMAIL = 'bame@gmail.com';
+  const [users, setUsers] = useState(() => {
+    const saved = localStorage.getItem('bame_users_db');
+    const initialUsers = saved ? JSON.parse(saved) : [
+      { name: 'Admin', email: 'bame@gmail.com', password: 'admin', role: 'admin' },
+      { name: 'Qonaq', email: 'qonaq@bame.az', password: 'qonaq', role: 'user' }
+    ];
+    if (!saved) localStorage.setItem('bame_users_db', JSON.stringify(initialUsers));
+    return initialUsers;
+  });
 
   useEffect(() => {
     if (user) {
@@ -18,18 +26,27 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  const register = (name, email) => {
-    const role = email === ADMIN_EMAIL ? 'admin' : 'user';
-    const newUser = { name, email, role };
+  const register = (name, email, password) => {
+    const existing = users.find(u => u.email === email);
+    if (existing) return { error: 'Bu email artıq qeydiyyatdan keçib.' };
+
+    const role = email === 'bame@gmail.com' ? 'admin' : 'user';
+    const newUser = { name, email, password, role };
+    
+    const updatedUsers = [...users, newUser];
+    setUsers(updatedUsers);
+    localStorage.setItem('bame_users_db', JSON.stringify(updatedUsers));
+    
     setUser(newUser);
-    return newUser;
+    return { user: newUser };
   };
 
-  const login = (email) => {
-    const role = email === ADMIN_EMAIL ? 'admin' : 'user';
-    const existingUser = { name: email.split('@')[0], email, role };
-    setUser(existingUser);
-    return existingUser;
+  const login = (email, password) => {
+    const foundUser = users.find(u => u.email === email && u.password === password);
+    if (!foundUser) return { error: 'E-poçt və ya şifrə yanlışdır.' };
+
+    setUser(foundUser);
+    return { user: foundUser };
   };
 
   const logout = () => setUser(null);

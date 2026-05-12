@@ -1,15 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
-import { Trash2, Minus, Plus } from 'lucide-react';
+import { useOrders } from '../../context/OrderContext';
+import { useAuth } from '../../context/AuthContext';
+import { Trash2, Minus, Plus, MapPin, Phone } from 'lucide-react';
 import styles from './Cart.module.css';
 
 const Cart = ({ inPanel = false }) => {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart();
+  const { addOrder } = useOrders();
+  const { user } = useAuth();
+  
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [orderSuccess, setOrderSuccess] = useState(false);
 
   const handleCheckout = () => {
-    alert("Sifarişiniz uğurla qəbul edildi! Bame sizi sevir!");
+    if (!user) {
+      alert("Sifariş vermək üçün daxil olmalısınız.");
+      return;
+    }
+    if (!address || !phone) {
+      alert("Zəhmət olmasa ünvan və əlaqə nömrənizi daxil edin.");
+      return;
+    }
+
+    addOrder({
+      userEmail: user.email,
+      customerName: user.name,
+      address,
+      phone,
+      items: cart,
+      total: cartTotal
+    });
+    
+    setOrderSuccess(true);
     clearCart();
+    setTimeout(() => setOrderSuccess(false), 5000);
   };
+
+  if (orderSuccess) {
+    return (
+      <div className={styles.emptyCart}>
+        <div className={styles.successAnimation}>
+          <h2>Təbriklər! 🎉</h2>
+          <p>Sifarişiniz Bame Adminə göndərildi.</p>
+          <p>Təsdiqləndikdən sonra "Sifarişlərim" bölməsindən izləyə bilərsiniz.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (cart.length === 0) {
     return (
@@ -60,7 +99,34 @@ const Cart = ({ inPanel = false }) => {
             <span>Yekun məbləğ:</span>
             <span>{cartTotal.toFixed(2)} AZN</span>
           </div>
-          <button className={styles.checkoutBtn} onClick={handleCheckout}>Sifarişi Təsdiqlə</button>
+
+          <div className={styles.checkoutForm}>
+            <h3>Çatdırılma Məlumatları</h3>
+            <div className={styles.formGroup}>
+              <div className={styles.inputWrapper}>
+                <MapPin size={18} />
+                <input 
+                  type="text" 
+                  placeholder="Çatdırılma ünvanı (Məs: 28 May m/s)" 
+                  value={address} 
+                  onChange={(e) => setAddress(e.target.value)} 
+                />
+              </div>
+            </div>
+            <div className={styles.formGroup}>
+              <div className={styles.inputWrapper}>
+                <Phone size={18} />
+                <input 
+                  type="text" 
+                  placeholder="WhatsApp nömrəniz (+994...)" 
+                  value={phone} 
+                  onChange={(e) => setPhone(e.target.value)} 
+                />
+              </div>
+            </div>
+          </div>
+
+          <button className={styles.checkoutBtn} onClick={handleCheckout}>Sifarişi Tamamla</button>
         </div>
       </div>
     </div>

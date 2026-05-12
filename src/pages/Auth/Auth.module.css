@@ -151,6 +151,17 @@
   font-size: 0.95rem;
 }
 
+.errorMessage {
+  background: #fef2f2;
+  color: #ef4444;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 15px;
+  border-left: 4px solid #ef4444;
+}
+
 /* Form Fields */
 .form {
   display: flex;

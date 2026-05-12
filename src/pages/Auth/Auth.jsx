@@ -11,20 +11,27 @@ const Auth = () => {
   const [mode, setMode] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [error, setError] = useState('');
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = e => {
     e.preventDefault();
-    let userRole = 'user';
+    setError('');
+    
+    let result;
     if (mode === 'register') {
-      const newUser = register(form.name, form.email);
-      userRole = newUser.role;
+      result = register(form.name, form.email, form.password);
     } else {
-      const loggedUser = login(form.email);
-      userRole = loggedUser.role;
+      result = login(form.email, form.password);
     }
 
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+
+    const userRole = result.user.role;
     if (userRole === 'admin') {
       navigate('/dashboard');
     } else {
@@ -83,6 +90,7 @@ const Auth = () => {
               <div className={styles.formHeader}>
                 <h1>{mode === 'login' ? 'Xoş Gəldiniz!' : 'Hesab Yaradın'}</h1>
                 <p>{mode === 'login' ? 'Hesabınıza daxil olun' : 'Qeydiyyatdan keçin, pulsuz!'}</p>
+                {error && <div className={styles.errorMessage}>{error}</div>}
               </div>
 
               {mode === 'register' && (
@@ -156,7 +164,7 @@ const Auth = () => {
                 type="button"
                 className={styles.demoBtn}
                 onClick={() => {
-                  login('qonaq@bame.az');
+                  login('qonaq@bame.az', 'qonaq');
                   navigate('/panel');
                 }}
               >
