@@ -1,10 +1,19 @@
+export const collections = [
+  { id: 'flash', label: 'Flaş Məhsullar' },
+  { id: 'bestseller', label: 'Çox Satılanlar' },
+  { id: 'discount', label: 'Endirimli Məhsullar' },
+  { id: 'coupon', label: 'Kuponlu Məhsullar' }
+];
+
+export const badges = ['Yeni', 'Bestseller', 'Endirim'];
+
 export const categories = [
-  { id: 'all', label: 'Hamısı' },
-  { id: 'decor', label: 'Dekor' },
-  { id: 'jewelry', label: 'Zərgərlik' },
-  { id: 'candles', label: 'Şamlar' },
-  { id: 'accessories', label: 'Aksesuarlar' },
-  { id: 'sets', label: 'Hədiyyə Dəstləri' },
+  { id: 'all', label: 'Hamısı', img: '' },
+  { id: 'decor', label: 'Dekor', img: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=2070&auto=format&fit=crop' },
+  { id: 'jewelry', label: 'Zərgərlik', img: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=2070&auto=format&fit=crop' },
+  { id: 'candles', label: 'Şamlar', img: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?q=80&w=1974&auto=format&fit=crop' },
+  { id: 'accessories', label: 'Aksesuarlar', img: 'https://images.unsplash.com/photo-1601924582970-9238bcb495d9?q=80&w=1974&auto=format&fit=crop' },
+  { id: 'sets', label: 'Hədiyyə Dəstləri', img: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=2030&auto=format&fit=crop' },
 ];
 
 export const products = [

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, ArrowLeft, Star, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useProducts } from '../../context/ProductContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -9,13 +10,17 @@ import styles from './ProductDetail.module.css';
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products } = useProducts();
+  const { products, categories, addComment } = useProducts();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [commentForm, setCommentForm] = useState({ name: '', rating: 5, text: '' });
+  const [showCommentSuccess, setShowCommentSuccess] = useState(false);
+
+  const categoryLabel = categories.find(c => c.id === product?.category)?.label || product?.category;
 
   const handleAddToCart = () => {
     addToCart({ ...product, quantity });
@@ -26,6 +31,15 @@ const ProductDetail = () => {
   const handleOrderNow = () => {
     addToCart({ ...product, quantity });
     navigate('/cart');
+  };
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    if (!commentForm.name || !commentForm.text) return;
+    addComment(product.id, commentForm);
+    setCommentForm({ name: '', rating: 5, text: '' });
+    setShowCommentSuccess(true);
+    setTimeout(() => setShowCommentSuccess(false), 3000);
   };
 
   useEffect(() => {
@@ -63,16 +77,16 @@ const ProductDetail = () => {
 
         {/* Sağ tərəf - Məlumarlar */}
         <div className={styles.infoSection}>
-          <p className={styles.category}>{product.category}</p>
+          <p className={styles.category}>{categoryLabel}</p>
           <h1 className={styles.title}>{product.name}</h1>
 
           <div className={styles.ratingRow}>
             <div className={styles.stars}>
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={16} fill={i < 5 ? "var(--primary)" : "none"} color="var(--primary)" />
+                <Star key={i} size={16} fill={i < Math.round(product.rating || 5) ? "var(--primary)" : "none"} color="var(--primary)" />
               ))}
             </div>
-            <span className={styles.reviews}>(24 Rəy)</span>
+            <span className={styles.reviews}>({product.reviews || 0} Rəy)</span>
           </div>
 
           <div className={styles.priceRow}>
@@ -118,6 +132,107 @@ const ProductDetail = () => {
               <RotateCcw size={20} />
               <span>Rahat Qaytarılma</span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className={styles.reviewsSection}>
+        <div className={styles.reviewsHeader}>
+          <h2>Müştəri Rəyləri</h2>
+          <div className={styles.ratingOverview}>
+            <div className={styles.bigRating}>{product.rating || 5.0}</div>
+            <div className={styles.stars}>
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={20} fill={i < 5 ? "var(--primary)" : "none"} color="var(--primary)" />
+              ))}
+            </div>
+            <span>{product.reviews || 0} rəy əsasında</span>
+          </div>
+        </div>
+
+        <div className={styles.reviewsGrid}>
+          {/* Comment Form */}
+          <div className={styles.commentFormBox}>
+            <h3>Rəy Bildir</h3>
+            <p>Məhsul haqqında təcrübənizi bizimlə bölüşün.</p>
+            
+            {showCommentSuccess && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={styles.successNote}>
+                Təşəkkür edirik! Rəyiniz uğurla əlavə edildi.
+              </motion.div>
+            )}
+
+            <form onSubmit={handleCommentSubmit} className={styles.commentForm}>
+              <div className={styles.formGroup}>
+                <label>Adınız və Soyadınız *</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={commentForm.name}
+                  onChange={e => setCommentForm({...commentForm, name: e.target.value})}
+                  placeholder="məs. Əli Məmmədov" 
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>Reytinq *</label>
+                <div className={styles.starSelector}>
+                  {[1, 2, 3, 4, 5].map(num => (
+                    <button 
+                      key={num} 
+                      type="button"
+                      onClick={() => setCommentForm({...commentForm, rating: num})}
+                      className={commentForm.rating >= num ? styles.starActive : ''}
+                    >
+                      <Star size={24} fill={commentForm.rating >= num ? "var(--primary)" : "none"} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Rəyiniz *</label>
+                <textarea 
+                  required 
+                  rows="4" 
+                  value={commentForm.text}
+                  onChange={e => setCommentForm({...commentForm, text: e.target.value})}
+                  placeholder="Məhsul haqqında fikirlərinizi yazın..."
+                ></textarea>
+              </div>
+
+              <button type="submit" className={styles.submitComment}>Rəyi Göndər</button>
+            </form>
+          </div>
+
+          {/* Comments List */}
+          <div className={styles.commentsList}>
+            {product.comments && product.comments.length > 0 ? (
+              product.comments.map(comment => (
+                <div key={comment.id} className={styles.commentItem}>
+                  <div className={styles.commentMeta}>
+                    <div className={styles.userAvatar}>
+                      {comment.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <h4 className={styles.userName}>{comment.name}</h4>
+                      <div className={styles.itemStars}>
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} size={14} fill={i < comment.rating ? "var(--primary)" : "none"} color="var(--primary)" />
+                        ))}
+                      </div>
+                    </div>
+                    <span className={styles.commentDate}>{comment.date}</span>
+                  </div>
+                  <p className={styles.commentText}>{comment.text}</p>
+                </div>
+              ))
+            ) : (
+              <div className={styles.noComments}>
+                <p>Hələ ki rəy yazılmayıb. İlk rəyi siz yazın!</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

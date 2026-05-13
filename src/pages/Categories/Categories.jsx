@@ -10,37 +10,26 @@ import {
   LayoutGrid 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { categories, products } from '../../data/products';
+import { useProducts } from '../../context/ProductContext';
 import styles from './Categories.module.css';
-
-const SIDEBAR_TABS = [
-  { id: 'kateqoriyalar', label: 'Kateqoriyalar', icon: <LayoutGrid size={18} /> },
-  { id: 'flash', label: 'Flaş Məhsullar', icon: <Zap size={18} /> },
-  { id: 'endirimli', label: 'Endirimli Məhsullar', icon: <Tag size={18} /> },
-  { id: 'satilanlar', label: 'Çox Satılanlar', icon: <TrendingUp size={18} /> },
-  { id: 'kuponlu', label: 'Kuponlu Məhsullar', icon: <Ticket size={18} /> },
-  { id: 'ucuzlasanlar', label: 'Qiyməti düşənlər', icon: <ArrowDownCircle size={18} /> }
-];
 
 const Categories = ({ inPanel = false }) => {
   const [activeTab, setActiveTab] = useState('kateqoriyalar');
   const navigate = useNavigate();
+  const { categories, products, collections } = useProducts();
 
-  // Curated category images for a professional look
-  const categoryDefaults = {
-    decor: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=200&q=80&auto=format&fit=crop',
-    jewelry: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=200&q=80&auto=format&fit=crop',
-    candles: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=200&q=80&auto=format&fit=crop',
-    accessories: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=200&q=80&auto=format&fit=crop',
-    sets: 'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=200&q=80&auto=format&fit=crop'
-  };
-
-  const getCategoryImage = (catId) => {
-    // Priority: Curated list -> First product image -> Placeholder
-    if (categoryDefaults[catId]) return categoryDefaults[catId];
-    const product = products.find(p => p.category === catId);
-    return product ? product.img : 'https://placehold.co/100x100/f5f0e8/D4AF37?text=' + catId;
-  };
+  // Map collections to sidebar tabs
+  const sidebarTabs = [
+    { id: 'kateqoriyalar', label: 'Kateqoriyalar', icon: <LayoutGrid size={18} /> },
+    ...collections.map(c => ({
+      id: c.id,
+      label: c.label,
+      icon: c.id === 'flash' ? <Zap size={18} /> : 
+            c.id === 'discount' ? <Tag size={18} /> : 
+            c.id === 'bestseller' ? <TrendingUp size={18} /> : 
+            c.id === 'coupon' ? <Ticket size={18} /> : <ArrowDownCircle size={18} />
+    }))
+  ];
 
   const handleCategoryClick = (catId) => {
     navigate(`/shop?category=${catId}`);
@@ -77,7 +66,7 @@ const Categories = ({ inPanel = false }) => {
       <div className={styles.mainLayout}>
         {/* Left Sidebar */}
         <div className={styles.sidebar}>
-          {SIDEBAR_TABS.map(tab => (
+          {sidebarTabs.map(tab => (
             <button
               key={tab.id}
               className={`${styles.sidebarItem} ${activeTab === tab.id ? styles.active : ''}`}
@@ -117,7 +106,10 @@ const Categories = ({ inPanel = false }) => {
                       onClick={() => handleCategoryClick(cat.id)}
                     >
                       <div className={styles.catImageWrapper}>
-                        <img src={getCategoryImage(cat.id)} alt={cat.label} />
+                        <img 
+                          src={cat.img || 'https://placehold.co/200x200/f5f0e8/D4AF37?text=' + cat.label} 
+                          alt={cat.label} 
+                        />
                         <div className={styles.cubeBadge}>📦</div>
                       </div>
                       <span className={styles.catName}>{cat.label}</span>
@@ -132,18 +124,13 @@ const Categories = ({ inPanel = false }) => {
                   className={styles.specialProductsGrid}
                 >
                   <div className={styles.tabHeader}>
-                    <h2>{SIDEBAR_TABS.find(t => t.id === activeTab)?.label}</h2>
+                    <h2>{sidebarTabs.find(t => t.id === activeTab)?.label}</h2>
                     <p>Sizin üçün seçilmiş ən yaxşı təkliflər</p>
                   </div>
                   <div className={styles.grid}>
                     {products.filter(p => {
                       if (!p.collections) return false;
-                      if (activeTab === 'flash') return p.collections.includes('flash');
-                      if (activeTab === 'endirimli') return p.collections.includes('discount');
-                      if (activeTab === 'satilanlar') return p.collections.includes('bestseller');
-                      if (activeTab === 'kuponlu') return p.collections.includes('coupon');
-                      if (activeTab === 'ucuzlasanlar') return p.collections.includes('discount');
-                      return false;
+                      return p.collections.includes(activeTab);
                     }).map(product => (
                       <motion.div 
                         key={product.id} 

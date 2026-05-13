@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Heart, Star, ShoppingCart, SlidersHorizontal, ChevronDown, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { categories } from '../../data/products';
 import { useProducts } from '../../context/ProductContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -19,7 +18,7 @@ const sortOptions = [
 import ProductCard from '../../components/common/ProductCard/ProductCard';
 
 const Shop = ({ inPanel = false }) => {
-  const { products } = useProducts();
+  const { products, categories } = useProducts();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const categoryFromUrl = queryParams.get('category') || 'all';

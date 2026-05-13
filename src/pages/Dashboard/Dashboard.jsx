@@ -2,35 +2,36 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, PlusCircle, Trash2,
-  LogOut, Store, TrendingUp, ShoppingBag, Eye, ImagePlus
+  LogOut, Store, TrendingUp, ShoppingBag, Eye, ImagePlus,
+  ShoppingCart
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
-import { categories } from '../../data/products';
 import styles from './Dashboard.module.css';
 
-const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Sifarişlər'];
+const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Kateqoriyalar', 'Sifarişlər', 'Analitika'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { products, addProduct, deleteProduct } = useProducts();
+  const { 
+    products, addProduct, deleteProduct, 
+    categories, addCategory, deleteCategory, updateCategoryImage,
+    badges, addBadge, deleteBadge,
+    collections, addCollection, deleteCollection
+  } = useProducts();
   const { orders, updateOrderStatus } = useOrders();
   const [activeTab, setActiveTab] = useState('Məhsullarım');
   const [form, setForm] = useState({
     name: '', price: '', oldPrice: '', category: 'decor',
     img: '', description: '', badge: '', collections: []
   });
+  const [newCat, setNewCat] = useState('');
+  const [newBadge, setNewBadge] = useState('');
+  const [newColl, setNewColl] = useState('');
   const [success, setSuccess] = useState(false);
-
-  const COLLECTION_OPTIONS = [
-    { id: 'flash', label: 'Flaş Məhsullar' },
-    { id: 'bestseller', label: 'Çox Satılanlar' },
-    { id: 'discount', label: 'Endirimli Məhsullar' },
-    { id: 'coupon', label: 'Kuponlu Məhsullar' }
-  ];
 
   // Redirect if not logged in or not admin
   if (!user || user.role !== 'admin') {
@@ -78,11 +79,14 @@ const Dashboard = () => {
     setTimeout(() => { setSuccess(false); setActiveTab('Məhsullarım'); }, 1500);
   };
 
+  const totalViews = products.reduce((acc, p) => acc + (p.reviews || 0), 0) * 12;
+  const trend = products.length > 0 ? `+${Math.round((orders.length / products.length) * 100)}%` : '0%';
+
   const stats = [
     { label: 'Məhsullarım', value: products.length, icon: <Package size={22} />, color: '#D4AF37' },
-    { label: 'Ümumi Baxış', value: '1,248', icon: <Eye size={22} />, color: '#2A9D8F' },
+    { label: 'Ümumi Baxış', value: totalViews.toLocaleString(), icon: <Eye size={22} />, color: '#2A9D8F' },
     { label: 'Sifarişlər', value: orders.length, icon: <ShoppingBag size={22} />, color: '#E63946' },
-    { label: 'Trend', value: '+12%', icon: <TrendingUp size={22} />, color: '#4361ee' },
+    { label: 'Trend', value: trend, icon: <TrendingUp size={22} />, color: '#4361ee' },
   ];
 
   return (
@@ -108,7 +112,11 @@ const Dashboard = () => {
               className={`${styles.navItem} ${activeTab === tab ? styles.navActive : ''}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === 'Məhsullarım' ? <Package size={18} /> : tab === 'Sifarişlər' ? <ShoppingBag size={18} /> : <PlusCircle size={18} />}
+              {tab === 'Məhsullarım' ? <Package size={18} /> : 
+               tab === 'Sifarişlər' ? <ShoppingBag size={18} /> : 
+               tab === 'Kateqoriyalar' ? <LayoutDashboard size={18} /> :
+               tab === 'Analitika' ? <TrendingUp size={18} /> :
+               <PlusCircle size={18} />}
               {tab}
             </button>
           ))}
@@ -239,9 +247,9 @@ const Dashboard = () => {
                       <label>Etiket (Badge)</label>
                       <select name="badge" value={form.badge} onChange={handleChange}>
                         <option value="">Heç biri</option>
-                        <option value="Yeni">Yeni</option>
-                        <option value="Bestseller">Ən çox satılan</option>
-                        <option value="Endirim">Endirim</option>
+                        {badges.map(b => (
+                          <option key={b} value={b}>{b}</option>
+                        ))}
                       </select>
                     </div>
                     <div className={styles.formGroup}>
@@ -253,7 +261,7 @@ const Dashboard = () => {
                   <div className={styles.formGroup} style={{ gridColumn: '1/-1' }}>
                     <label>Xüsusi Kolleksiyalar (Həmin bölmələrə düşməsi üçün seçin)</label>
                     <div className={styles.collectionsGrid}>
-                      {COLLECTION_OPTIONS.map(opt => (
+                      {collections.map(opt => (
                         <label key={opt.id} className={styles.checkboxLabel}>
                           <input 
                             type="checkbox" 
@@ -286,6 +294,220 @@ const Dashboard = () => {
                     <PlusCircle size={18} /> Məhsulu Əlavə Et
                   </button>
                 </form>
+              </motion.div>
+            ) : activeTab === 'Kateqoriyalar' ? (
+              <motion.div
+                key="categories"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className={styles.sectionHeader}>
+                  <h2>Kateqoriya və Etiket İdarəedilməsi</h2>
+                  <p>Yeni kateqoriya və ya etiket (badge) əlavə edin.</p>
+                </div>
+
+                <div className={styles.managementGrid}>
+                  {/* Category Management */}
+                  <div className={styles.manageBox}>
+                    <h3>Kateqoriya Əlavə Et</h3>
+                    <div className={styles.manageAction}>
+                      <input 
+                        value={newCat} 
+                        onChange={e => setNewCat(e.target.value)} 
+                        placeholder="məs. Texnologiya" 
+                      />
+                      <button onClick={() => { if(newCat){ addCategory(newCat); setNewCat(''); } }}>
+                        <PlusCircle size={18} /> Əlavə Et
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Badge Management */}
+                  <div className={styles.manageBox}>
+                    <h3>Yeni Etiket Əlavə Et</h3>
+                    <div className={styles.manageAction}>
+                      <input 
+                        value={newBadge} 
+                        onChange={e => setNewBadge(e.target.value)} 
+                        placeholder="məs. Məhdud Sayda" 
+                      />
+                      <button onClick={() => { if(newBadge){ addBadge(newBadge); setNewBadge(''); } }}>
+                        <PlusCircle size={18} /> Əlavə Et
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Collection Management */}
+                  <div className={styles.manageBox}>
+                    <h3>Xüsusi Kolleksiya Əlavə Et</h3>
+                    <div className={styles.manageAction}>
+                      <input 
+                        value={newColl} 
+                        onChange={e => setNewColl(e.target.value)} 
+                        placeholder="məs. Bayram Hədiyyələri" 
+                      />
+                      <button onClick={() => { if(newColl){ addCollection(newColl); setNewColl(''); } }}>
+                        <PlusCircle size={18} /> Əlavə Et
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.badgeListSection}>
+                  <div className={styles.manageRow}>
+                    <div className={styles.manageHalf}>
+                      <h3>Mövcud Etiketlər</h3>
+                      <div className={styles.badgeTags}>
+                        {badges.map(b => (
+                          <span key={b} className={styles.badgeTag}>
+                            {b} <button onClick={() => deleteBadge(b)}>×</button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className={styles.manageHalf}>
+                      <h3>Mövcud Kolleksiyalar</h3>
+                      <div className={styles.badgeTags}>
+                        {collections.map(c => (
+                          <span key={c.id} className={styles.badgeTag}>
+                            {c.label} <button onClick={() => deleteCollection(c.id)}>×</button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.sectionHeader} style={{ marginTop: '40px' }}>
+                  <h2>Kateqoriya Şəkilləri</h2>
+                </div>
+                <div className={styles.categoryEditorGrid}>
+                  {categories.filter(c => c.id !== 'all').map(cat => (
+                    <div key={cat.id} className={styles.categoryEditCard}>
+                      <div className={styles.catEditImg}>
+                        <img src={cat.img} alt={cat.label} onError={e => { e.target.src = 'https://placehold.co/200x150/f5f0e8/D4AF37?text=' + cat.label; }} />
+                        <label className={styles.uploadOverlay}>
+                          <ImagePlus size={24} />
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            hidden 
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                reader.onloadend = () => updateCategoryImage(cat.id, reader.result);
+                                reader.readAsDataURL(file);
+                              }
+                            }} 
+                          />
+                        </label>
+                      </div>
+                      <div className={styles.catEditInfo}>
+                        <h3>{cat.label}</h3>
+                        <div className={styles.catCardFooter}>
+                          <span>{products.filter(p => p.category === cat.id).length} Məhsul</span>
+                          <button className={styles.catDeleteBtn} onClick={() => deleteCategory(cat.id)}>
+                            <Trash2 size={14} /> Sil
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            ) : activeTab === 'Analitika' ? (
+              <motion.div
+                key="analytics"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className={styles.sectionHeader}>
+                  <h2>Mağaza Analitikası</h2>
+                  <p>Məhsul və kateqoriya üzrə satış performansınız.</p>
+                </div>
+
+                <div className={styles.analyticsGrid}>
+                  {/* Category Performance */}
+                  <div className={styles.chartBox}>
+                    <h3>Kateqoriya üzrə Məhsul Sayı</h3>
+                    <div className={styles.barChart}>
+                      {categories.filter(c => c.id !== 'all').map(cat => {
+                        const count = products.filter(p => p.category === cat.id).length;
+                        const percentage = products.length > 0 ? (count / products.length) * 100 : 0;
+                        return (
+                          <div key={cat.id} className={styles.barItem}>
+                            <div className={styles.barLabel}>
+                              <span>{cat.label}</span>
+                              <span>{count} ədəd</span>
+                            </div>
+                            <div className={styles.barTrack}>
+                              <motion.div 
+                                initial={{ width: 0 }}
+                                animate={{ width: `${percentage}%` }}
+                                className={styles.barFill} 
+                                style={{ background: 'var(--primary)' }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Top Products */}
+                  <div className={styles.chartBox}>
+                    <h3>Ən Çox Maraq Görən Məhsullar (Rəylər)</h3>
+                    <div className={styles.topProductsList}>
+                      {[...products].sort((a, b) => (b.reviews || 0) - (a.reviews || 0)).slice(0, 5).map(p => {
+                        const maxReviews = Math.max(...products.map(pr => pr.reviews || 0), 1);
+                        const percentage = ((p.reviews || 0) / maxReviews) * 100;
+                        return (
+                          <div key={p.id} className={styles.topProdItem}>
+                            <img src={p.img} alt={p.name} />
+                            <div className={styles.topProdInfo}>
+                              <div className={styles.topProdHeader}>
+                                <h4>{p.name}</h4>
+                                <span>{p.reviews || 0} rəy</span>
+                              </div>
+                              <div className={styles.miniBarTrack}>
+                                <motion.div 
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${percentage}%` }}
+                                  className={styles.miniBarFill} 
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Status Summary */}
+                <div className={styles.statusGrid}>
+                  <div className={styles.statusBox}>
+                    <div className={styles.statusIcon} style={{ background: '#e8f5e9', color: '#2e7d32' }}>
+                      <ShoppingCart size={24} />
+                    </div>
+                    <div>
+                      <h4>Təsdiqlənmiş Sifarişlər</h4>
+                      <p>{orders.filter(o => o.status === 'approved' || o.status === 'delivered').length}</p>
+                    </div>
+                  </div>
+                  <div className={styles.statusBox}>
+                    <div className={styles.statusIcon} style={{ background: '#fff3e0', color: '#ef6c00' }}>
+                      <Package size={24} />
+                    </div>
+                    <div>
+                      <h4>Gözləmədə Olanlar</h4>
+                      <p>{orders.filter(o => o.status === 'pending').length}</p>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             ) : (
               <motion.div
@@ -325,7 +547,7 @@ const Dashboard = () => {
                   ))}
                 </div>
               </motion.div>
-            )}
+            ) }
           </AnimatePresence>
         </div>
       </main>
