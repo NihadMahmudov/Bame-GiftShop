@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { useProducts } from '../../context/ProductContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { useAuth } from '../../context/AuthContext';
+import RecentlyViewed from '../../components/home/RecentlyViewed';
 import styles from './ProductDetail.module.css';
 
 const ProductDetail = () => {
@@ -13,6 +15,7 @@ const ProductDetail = () => {
   const { products, categories, addComment } = useProducts();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { user } = useAuth();
 
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -46,6 +49,11 @@ const ProductDetail = () => {
     const foundProduct = products.find(p => p.id === parseInt(id));
     if (foundProduct) {
       setProduct(foundProduct);
+      
+      const saved = localStorage.getItem('bame_recent');
+      let ids = saved ? JSON.parse(saved) : [];
+      ids = [foundProduct.id, ...ids.filter(i => i !== foundProduct.id)].slice(0, 10);
+      localStorage.setItem('bame_recent', JSON.stringify(ids));
     }
   }, [id, products]);
 
@@ -54,6 +62,23 @@ const ProductDetail = () => {
       <div className={styles.loading}>
         <p>Məhsul yüklənir və ya tapılmadı...</p>
         <button onClick={() => navigate('/shop')}>Mağazaya Qayıt</button>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className={`container ${styles.authRequired}`}>
+        <div className={styles.authCard}>
+          <div className={styles.authIcon}>🔒</div>
+          <h2>Məhsula baxmaq üçün giriş edin</h2>
+          <p>Flash satış və digər bütün özəl təklifləri görmək üçün hesabınıza daxil olun və ya yeni hesab yaradın.</p>
+          <div className={styles.authActions}>
+            <button onClick={() => navigate('/login')} className={styles.loginBtn}>Daxil Ol</button>
+            <button onClick={() => navigate('/login')} className={styles.registerBtn}>Qeydiyyatdan Keç</button>
+          </div>
+          <button onClick={() => navigate('/')} className={styles.backHome}>Ana Səhifəyə Qayıt</button>
+        </div>
       </div>
     );
   }
@@ -67,7 +92,6 @@ const ProductDetail = () => {
       </button>
 
       <div className={styles.productGrid}>
-        {/* Sol tərəf - Şəkil */}
         <div className={styles.imageSection}>
           <div className={styles.mainImage}>
             <img src={product.img} alt={product.name} />
@@ -75,7 +99,6 @@ const ProductDetail = () => {
           </div>
         </div>
 
-        {/* Sağ tərəf - Məlumarlar */}
         <div className={styles.infoSection}>
           <p className={styles.category}>{categoryLabel}</p>
           <h1 className={styles.title}>{product.name}</h1>
@@ -95,7 +118,7 @@ const ProductDetail = () => {
           </div>
 
           <p className={styles.description}>
-            {product.description || "Bu məhsul Bame Gift Shop tərəfindən xüsusi olaraq seçilmişdir. Yüksək keyfiyyət və estetik dizaynı ilə seçilir. Həm özünüz, həm də sevdikləriniz üçün mükəmməl hədiyyə seçimidir."}
+            {product.description || "Bu məhsul Bame Gift Shop tərəfindən xüsusi olaraq seçilmişdir."}
           </p>
 
           <div className={styles.actions}>
@@ -104,39 +127,23 @@ const ProductDetail = () => {
               <span>{quantity}</span>
               <button onClick={() => setQuantity(quantity + 1)}>+</button>
             </div>
-            <button
-              className={`${styles.addToCart} ${added ? styles.added : ''}`}
-              onClick={handleAddToCart}
-            >
-              <ShoppingCart size={20} />
-              {added ? 'Əlavə edildi!' : 'Səbətə At'}
+            <button className={`${styles.addToCart} ${added ? styles.added : ''}`} onClick={handleAddToCart}>
+              <ShoppingCart size={20} /> {added ? 'Əlavə edildi!' : 'Səbətə At'}
             </button>
-            <button className={styles.orderNow} onClick={handleOrderNow}>
-              Sifariş Et
-            </button>
+            <button className={styles.orderNow} onClick={handleOrderNow}>Sifariş Et</button>
             <button className={`${styles.wishlist} ${isLiked ? styles.active : ''}`} onClick={() => toggleWishlist(product)}>
               <Heart size={24} fill={isLiked ? "var(--error)" : "none"} color={isLiked ? "var(--error)" : "currentColor"} />
             </button>
           </div>
 
           <div className={styles.features}>
-            <div className={styles.featureItem}>
-              <Truck size={20} />
-              <span>Sürətli Çatdırılma (24 saat ərzində)</span>
-            </div>
-            <div className={styles.featureItem}>
-              <ShieldCheck size={20} />
-              <span>100% Keyfiyyət Zəmanəti</span>
-            </div>
-            <div className={styles.featureItem}>
-              <RotateCcw size={20} />
-              <span>Rahat Qaytarılma</span>
-            </div>
+            <div className={styles.featureItem}><Truck size={20} /> <span>Sürətli Çatdırılma</span></div>
+            <div className={styles.featureItem}><ShieldCheck size={20} /> <span>100% Keyfiyyət Zəmanəti</span></div>
+            <div className={styles.featureItem}><RotateCcw size={20} /> <span>Rahat Qaytarılma</span></div>
           </div>
         </div>
       </div>
 
-      {/* Reviews Section */}
       <div className={styles.reviewsSection}>
         <div className={styles.reviewsHeader}>
           <h2>Müştəri Rəyləri</h2>
@@ -147,95 +154,50 @@ const ProductDetail = () => {
                 <Star key={i} size={20} fill={i < 5 ? "var(--primary)" : "none"} color="var(--primary)" />
               ))}
             </div>
-            <span>{product.reviews || 0} rəy əsasında</span>
+            <span>{product.reviews || 0} rəy</span>
           </div>
         </div>
 
         <div className={styles.reviewsGrid}>
-          {/* Comment Form */}
           <div className={styles.commentFormBox}>
             <h3>Rəy Bildir</h3>
-            <p>Məhsul haqqında təcrübənizi bizimlə bölüşün.</p>
-            
-            {showCommentSuccess && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={styles.successNote}>
-                Təşəkkür edirik! Rəyiniz uğurla əlavə edildi.
-              </motion.div>
-            )}
-
+            {showCommentSuccess && <div className={styles.successNote}>Təşəkkür edirik! Rəyiniz əlavə edildi.</div>}
             <form onSubmit={handleCommentSubmit} className={styles.commentForm}>
-              <div className={styles.formGroup}>
-                <label>Adınız və Soyadınız *</label>
-                <input 
-                  type="text" 
-                  required 
-                  value={commentForm.name}
-                  onChange={e => setCommentForm({...commentForm, name: e.target.value})}
-                  placeholder="məs. Əli Məmmədov" 
-                />
+              <input type="text" required value={commentForm.name} onChange={e => setCommentForm({...commentForm, name: e.target.value})} placeholder="Adınız" />
+              <div className={styles.starSelector}>
+                {[1, 2, 3, 4, 5].map(num => (
+                  <button key={num} type="button" onClick={() => setCommentForm({...commentForm, rating: num})}>
+                    <Star size={24} fill={commentForm.rating >= num ? "var(--primary)" : "none"} />
+                  </button>
+                ))}
               </div>
-              
-              <div className={styles.formGroup}>
-                <label>Reytinq *</label>
-                <div className={styles.starSelector}>
-                  {[1, 2, 3, 4, 5].map(num => (
-                    <button 
-                      key={num} 
-                      type="button"
-                      onClick={() => setCommentForm({...commentForm, rating: num})}
-                      className={commentForm.rating >= num ? styles.starActive : ''}
-                    >
-                      <Star size={24} fill={commentForm.rating >= num ? "var(--primary)" : "none"} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Rəyiniz *</label>
-                <textarea 
-                  required 
-                  rows="4" 
-                  value={commentForm.text}
-                  onChange={e => setCommentForm({...commentForm, text: e.target.value})}
-                  placeholder="Məhsul haqqında fikirlərinizi yazın..."
-                ></textarea>
-              </div>
-
+              <textarea required rows="4" value={commentForm.text} onChange={e => setCommentForm({...commentForm, text: e.target.value})} placeholder="Rəyiniz..."></textarea>
               <button type="submit" className={styles.submitComment}>Rəyi Göndər</button>
             </form>
           </div>
 
-          {/* Comments List */}
           <div className={styles.commentsList}>
-            {product.comments && product.comments.length > 0 ? (
-              product.comments.map(comment => (
-                <div key={comment.id} className={styles.commentItem}>
-                  <div className={styles.commentMeta}>
-                    <div className={styles.userAvatar}>
-                      {comment.name.charAt(0).toUpperCase()}
+            {product.comments?.map(comment => (
+              <div key={comment.id} className={styles.commentItem}>
+                <div className={styles.commentMeta}>
+                  <div className={styles.userAvatar}>{comment.name.charAt(0).toUpperCase()}</div>
+                  <div>
+                    <h4 className={styles.userName}>{comment.name}</h4>
+                    <div className={styles.itemStars}>
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={14} fill={i < comment.rating ? "var(--primary)" : "none"} />
+                      ))}
                     </div>
-                    <div>
-                      <h4 className={styles.userName}>{comment.name}</h4>
-                      <div className={styles.itemStars}>
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={14} fill={i < comment.rating ? "var(--primary)" : "none"} color="var(--primary)" />
-                        ))}
-                      </div>
-                    </div>
-                    <span className={styles.commentDate}>{comment.date}</span>
                   </div>
-                  <p className={styles.commentText}>{comment.text}</p>
                 </div>
-              ))
-            ) : (
-              <div className={styles.noComments}>
-                <p>Hələ ki rəy yazılmayıb. İlk rəyi siz yazın!</p>
+                <p className={styles.commentText}>{comment.text}</p>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
+
+      <RecentlyViewed />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { ProductProvider } from './context/ProductContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { OrderProvider } from './context/OrderContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Layout from './components/layout/Layout/Layout';
 import Home from './pages/Home/Home';
 import Shop from './pages/Shop/Shop';
@@ -20,44 +21,39 @@ import ProductDetail from './pages/ProductDetail/ProductDetail';
 
 function App() {
   return (
-    <AuthProvider>
-      <ProductProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <OrderProvider>
-              <Router>
-              <Routes>
-                {/* Auth — öz dizaynı var */}
-                <Route path="/login" element={<Auth />} />
-
-                {/* Dashboard — öz dizaynı var (Navbar/Footer yoxdur) */}
-                <Route path="/dashboard" element={<Dashboard />} />
-
-                {/* Panel və Məhsul Detalları — Təmiz mühit (Navbar/Footer-siz) */}
-                <Route path="/panel" element={<UserPanel />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
-
-                {/* Adi səhifələr — Layout ilə */}
-                <Route path="/*" element={
-                  <Layout>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/shop" element={<Shop />} />
-                      <Route path="/categories" element={<Categories />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/cart" element={<Cart />} />
-                      <Route path="/wishlist" element={<Wishlist />} />
-                    </Routes>
-                  </Layout>
-                } />
-              </Routes>
-            </Router>
-            </OrderProvider>
-          </WishlistProvider>
-        </CartProvider>
-      </ProductProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <ProductProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <OrderProvider>
+                <Router>
+                <Routes>
+                  <Route path="/login" element={<Auth />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/panel" element={<UserPanel />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/*" element={
+                    <Layout>
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/shop" element={<Shop />} />
+                        <Route path="/categories" element={<Categories />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/cart" element={<Cart />} />
+                        <Route path="/wishlist" element={<Wishlist />} />
+                      </Routes>
+                    </Layout>
+                  } />
+                </Routes>
+              </Router>
+              </OrderProvider>
+            </WishlistProvider>
+          </CartProvider>
+        </ProductProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

@@ -98,7 +98,24 @@ export const ProductProvider = ({ children }) => {
     setCollections(prev => prev.filter(c => c.id !== id));
   };
 
+  const [flashSale, setFlashSale] = useState(() => {
+    const saved = localStorage.getItem('bame_flash_sale');
+    return saved ? JSON.parse(saved) : {
+      targetDate: new Date(new Date().setHours(23, 59, 59)).toISOString(),
+      productIds: []
+    };
+  });
+
+  useEffect(() => {
+    localStorage.setItem('bame_flash_sale', JSON.stringify(flashSale));
+  }, [flashSale]);
+
+  const updateFlashSale = (data) => {
+    setFlashSale(prev => ({ ...prev, ...data }));
+  };
+
   const addComment = (productId, comment) => {
+    // ... (previous addComment code)
     const newComment = {
       ...comment,
       id: Date.now(),
@@ -126,7 +143,9 @@ export const ProductProvider = ({ children }) => {
       collections,
       addCollection,
       deleteCollection,
-      addComment
+      addComment,
+      flashSale,
+      updateFlashSale
     }}>
       {children}
     </ProductContext.Provider>

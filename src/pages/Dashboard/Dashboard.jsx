@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, PlusCircle, Trash2,
   LogOut, Store, TrendingUp, ShoppingBag, Eye, ImagePlus,
-  ShoppingCart
+  ShoppingCart, Zap, Calendar, CheckCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
@@ -11,7 +11,7 @@ import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
 import styles from './Dashboard.module.css';
 
-const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Kateqoriyalar', 'Sifarişlər', 'Analitika'];
+const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Kateqoriyalar', 'Sifarişlər', 'Analitika', 'Flaş Satış'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -115,7 +115,8 @@ const Dashboard = () => {
               {tab === 'Məhsullarım' ? <Package size={18} /> : 
                tab === 'Sifarişlər' ? <ShoppingBag size={18} /> : 
                tab === 'Kateqoriyalar' ? <LayoutDashboard size={18} /> :
-               tab === 'Analitika' ? <TrendingUp size={18} /> :
+               tab === 'Analitika' ? <TrendingUp size={18} /> : 
+               tab === 'Flaş Satış' ? <Zap size={18} /> : 
                <PlusCircle size={18} />}
               {tab}
             </button>

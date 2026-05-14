@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Search, Menu, X, User, Heart, LogOut, Settings } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, User, Heart, LogOut, Settings, Sun, Moon } from 'lucide-react';
 import { useCart } from '../../../context/CartContext';
 import { useWishlist } from '../../../context/WishlistContext';
 import { useAuth } from '../../../context/AuthContext';
+import { useTheme } from '../../../context/ThemeContext';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
   const { cartItemCount } = useCart();
   const { wishlist } = useWishlist();
   const { user, logout, isAdmin } = useAuth();
+  const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -58,6 +60,9 @@ const Navbar = () => {
         </div>
 
         <div className={styles.navActions}>
+          <button className={styles.iconBtn} onClick={toggleTheme} title={isDarkMode ? 'İşıqlı Rejim' : 'Qaranlıq Rejim'}>
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
           <button className={styles.iconBtn} aria-label="Search">
             <Search size={20} />
           </button>
