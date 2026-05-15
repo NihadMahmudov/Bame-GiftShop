@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, PlusCircle, Trash2,
   LogOut, Store, TrendingUp, ShoppingBag, Eye, ImagePlus,
-  ShoppingCart, Zap, Calendar, CheckCircle
+  ShoppingCart, Zap, Calendar, CheckCircle, Camera
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
@@ -11,7 +11,7 @@ import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
 import styles from './Dashboard.module.css';
 
-const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Kateqoriyalar', 'Sifarişlər', 'Analitika', 'Flaş Satış'];
+const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Kateqoriyalar', 'Sifarişlər', 'Analitika', 'Flaş Satış', 'Hekayələr'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -20,7 +20,9 @@ const Dashboard = () => {
     products, addProduct, deleteProduct, 
     categories, addCategory, deleteCategory, updateCategoryImage,
     badges, addBadge, deleteBadge,
-    collections, addCollection, deleteCollection
+    collections, addCollection, deleteCollection,
+    flashSale, updateFlashSale,
+    stories, addStory, deleteStory
   } = useProducts();
   const { orders, updateOrderStatus } = useOrders();
   const [activeTab, setActiveTab] = useState('Məhsullarım');
@@ -117,6 +119,7 @@ const Dashboard = () => {
                tab === 'Kateqoriyalar' ? <LayoutDashboard size={18} /> :
                tab === 'Analitika' ? <TrendingUp size={18} /> : 
                tab === 'Flaş Satış' ? <Zap size={18} /> : 
+               tab === 'Hekayələr' ? <Camera size={18} /> : 
                <PlusCircle size={18} />}
               {tab}
             </button>
@@ -507,6 +510,116 @@ const Dashboard = () => {
                       <h4>Gözləmədə Olanlar</h4>
                       <p>{orders.filter(o => o.status === 'pending').length}</p>
                     </div>
+                  </div>
+                </div>
+              </motion.div>
+            ) : activeTab === 'Flaş Satış' ? (
+              <motion.div
+                key="flash_sale"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className={styles.sectionHeader}>
+                  <h2>Flaş Satış İdarəetməsi</h2>
+                  <p>Məhsulları seçin və kampaniya vaxtını təyin edin.</p>
+                </div>
+
+                <div className={styles.flashSettings}>
+                  <div className={styles.settingBox}>
+                    <label><Calendar size={18} /> Satışın Bitmə Vaxtı</label>
+                    <input 
+                      type="datetime-local" 
+                      className={styles.dateInput}
+                      value={flashSale.targetDate.slice(0, 16)} 
+                      onChange={(e) => updateFlashSale({ targetDate: new Date(e.target.value).toISOString() })}
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.table}>
+                  <div className={styles.tableHeader}>
+                    <span>Məhsul</span>
+                    <span>Qiymət</span>
+                    <span>Kateqoriya</span>
+                    <span>Seçim</span>
+                  </div>
+                  <div className={styles.tableBody}>
+                    {products.map(product => {
+                      const isSelected = flashSale.productIds.includes(product.id);
+                      return (
+                        <div 
+                          key={product.id} 
+                          className={`${styles.tableRow} ${isSelected ? styles.rowSelected : ''}`}
+                          onClick={() => {
+                            const newIds = isSelected
+                              ? flashSale.productIds.filter(id => id !== product.id)
+                              : [...flashSale.productIds, product.id];
+                            updateFlashSale({ productIds: newIds });
+                          }}
+                        >
+                          <div className={styles.productCell}>
+                            <img src={product.img} alt="" />
+                            <span>{product.name}</span>
+                          </div>
+                          <span className={styles.priceCell}>{product.price} AZN</span>
+                          <span>{categories.find(c => c.id === product.category)?.label}</span>
+                          <span className={styles.checkCell}>
+                            <div className={`${styles.customCheck} ${isSelected ? styles.checked : ''}`}>
+                              {isSelected && <CheckCircle size={16} />}
+                            </div>
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </motion.div>
+            ) : activeTab === 'Hekayələr' ? (
+              <motion.div
+                key="stories_manage"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className={styles.sectionHeader}>
+                  <h2>Hekayə (Story) İdarəetməsi</h2>
+                  <p>Ana səhifə üçün yeni hekayələr əlavə edin.</p>
+                </div>
+
+                <div className={styles.storiesManager}>
+                  <div className={styles.addStoryForm}>
+                    <div className={styles.formGroup}>
+                      <label>Hekayə Başlığı</label>
+                      <input id="storyLabel" type="text" placeholder="məs. Yeni Kolleksiya" />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Hekayə Şəkli (URL)</label>
+                      <input id="storyImg" type="text" placeholder="https://..." />
+                    </div>
+                    <button className={styles.addBtn} onClick={() => {
+                      const l = document.getElementById('storyLabel').value;
+                      const i = document.getElementById('storyImg').value;
+                      if(l && i) {
+                        addStory(i, l);
+                        document.getElementById('storyLabel').value = '';
+                        document.getElementById('storyImg').value = '';
+                      }
+                    }}>Hekayə Əlavə Et</button>
+                  </div>
+
+                  <div className={styles.storiesList}>
+                    {stories.map(story => (
+                      <div key={story.id} className={styles.storyManageItem}>
+                        <img src={story.img} alt="" />
+                        <div className={styles.storyInfo}>
+                          <h4>{story.label}</h4>
+                          <button onClick={() => deleteStory(story.id)} className={styles.storyDelete}>
+                            <Trash2 size={14} /> Sil
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </motion.div>

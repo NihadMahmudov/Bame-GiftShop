@@ -1,29 +1,99 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useProducts } from '../../../context/ProductContext';
 import styles from './StoryBar.module.css';
 
-const stories = [
-  { id: 1, title: 'Yeni İllər', img: 'https://images.unsplash.com/photo-1543508282-6319a3e2621f?q=80&w=200&auto=format&fit=crop' },
-  { id: 2, title: 'Sevgililər', img: 'https://images.unsplash.com/photo-1518196775791-2e1bbd382284?q=80&w=200&auto=format&fit=crop' },
-  { id: 3, title: 'Ad Günü', img: 'https://images.unsplash.com/photo-1530103043960-ef38714abb15?q=80&w=200&auto=format&fit=crop' },
-  { id: 4, title: 'Toy-Nişan', img: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=200&auto=format&fit=crop' },
-  { id: 5, title: 'Endirim', img: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=200&auto=format&fit=crop' },
-  { id: 6, title: 'Lüks', img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=200&auto=format&fit=crop' },
-  { id: 7, title: 'Sürpriz', img: 'https://images.unsplash.com/photo-1513201099705-a9746e1e201f?q=80&w=200&auto=format&fit=crop' },
-];
-
 const StoryBar = () => {
+  const { stories } = useProducts();
+  const [selectedStory, setSelectedStory] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const openStory = (index) => {
+    setCurrentIndex(index);
+    setSelectedStory(stories[index]);
+  };
+
+  const nextStory = () => {
+    if (currentIndex < stories.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+      setSelectedStory(stories[currentIndex + 1]);
+    } else {
+      setSelectedStory(null);
+    }
+  };
+
+  const prevStory = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+      setSelectedStory(stories[currentIndex - 1]);
+    }
+  };
+
   return (
-    <div className={styles.storyContainer}>
-      <div className={styles.storyTrack}>
-        {stories.map(story => (
-          <div key={story.id} className={styles.storyItem}>
-            <div className={styles.imageWrapper}>
-              <img src={story.img} alt={story.title} />
+    <div className={styles.storyBarWrapper}>
+      <div className={`container ${styles.storyContainer}`}>
+        <div className={styles.stories}>
+          {stories.map((story, index) => (
+            <div key={story.id} className={styles.storyItem} onClick={() => openStory(index)}>
+              <div className={styles.storyRing}>
+                <img src={story.img} alt={story.label} />
+              </div>
+              <span className={styles.storyLabel}>{story.label}</span>
             </div>
-            <span>{story.title}</span>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+
+      <AnimatePresence>
+        {selectedStory && (
+          <motion.div 
+            className={styles.viewerOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <button className={styles.closeBtn} onClick={() => setSelectedStory(null)}>
+              <X size={30} />
+            </button>
+
+            <div className={styles.viewerContent}>
+              <button className={styles.navBtn} onClick={prevStory} disabled={currentIndex === 0}>
+                <ChevronLeft size={40} />
+              </button>
+
+              <div className={styles.storyWindow}>
+                <div className={styles.progressBar}>
+                  {stories.map((_, i) => (
+                    <div key={i} className={styles.progressTrack}>
+                      <motion.div 
+                        className={styles.progressFill}
+                        initial={{ width: 0 }}
+                        animate={{ width: i === currentIndex ? '100%' : i < currentIndex ? '100%' : '0%' }}
+                        transition={{ duration: i === currentIndex ? 5 : 0, ease: 'linear' }}
+                        onAnimationComplete={() => {
+                          if (i === currentIndex) nextStory();
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className={styles.storyHeader}>
+                  <img src={selectedStory.img} alt="" className={styles.miniAvatar} />
+                  <span>{selectedStory.label}</span>
+                </div>
+
+                <img src={selectedStory.img} alt="" className={styles.mainStoryImg} />
+              </div>
+
+              <button className={styles.navBtn} onClick={nextStory}>
+                <ChevronRight size={40} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
