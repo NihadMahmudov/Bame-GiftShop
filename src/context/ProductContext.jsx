@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { initialProducts } from '../data/products';
+import { products as initialProducts } from '../data/products';
 
 const ProductContext = createContext();
 
