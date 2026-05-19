@@ -1804,3 +1804,199 @@
   }
 }
 
+/* ─── Premium Reviews Management Section ─── */
+.reviewsManagerList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.noReviews {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: var(--bg-offset);
+  border-radius: 16px;
+  border: 1px dashed var(--border);
+}
+
+.noReviewsIcon {
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.noReviews h3 {
+  font-size: 1.2rem;
+  color: var(--secondary);
+  margin-bottom: 6px;
+}
+
+.noReviews p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.reviewsGridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.reviewCardItem {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+}
+
+.reviewCardItem:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.reviewCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 14px;
+}
+
+.reviewProductMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reviewProductImg {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: var(--bg-offset);
+}
+
+.reviewProductInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reviewProductInfo h4 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--secondary);
+  line-height: 1.2;
+}
+
+.reviewProductInfo span {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.reviewDeleteBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  color: #e63946;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.reviewDeleteBtn:hover {
+  background: #e63946;
+  color: white;
+  border-color: #e63946;
+  transform: translateY(-1px);
+}
+
+.reviewCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reviewerMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reviewerAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.reviewerMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reviewerMain h5 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.reviewerRatingDate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.reviewStars {
+  display: flex;
+  gap: 2px;
+}
+
+.reviewStars svg {
+  color: var(--primary);
+}
+
+.reviewDate {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.reviewTextVal {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Dark Theme Specifics */
+[data-theme='dark'] .reviewCardItem {
+  background: #121212;
+}
+

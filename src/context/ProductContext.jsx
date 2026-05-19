@@ -106,6 +106,18 @@ export const ProductProvider = ({ children }) => {
     ));
   };
 
+  const deleteComment = (productId, commentId) => {
+    setProducts(prev => prev.map(p => 
+      p.id === productId 
+        ? { 
+            ...p, 
+            comments: (p.comments || []).filter(c => c.id !== commentId), 
+            reviews: Math.max(0, (p.reviews || 1) - 1) 
+          } 
+        : p
+    ));
+  };
+
   const addStory = (img, label) => {
     const newStory = { id: Date.now(), img, label };
     setStories(prev => [newStory, ...prev]);
@@ -120,7 +132,7 @@ export const ProductProvider = ({ children }) => {
       badges, addBadge, deleteBadge,
       collections, addCollection, deleteCollection,
       flashSale, updateFlashSale,
-      addComment,
+      addComment, deleteComment,
       stories, addStory, deleteStory
     }}>
       {children}

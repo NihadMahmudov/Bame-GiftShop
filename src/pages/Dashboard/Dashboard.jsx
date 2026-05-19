@@ -13,7 +13,7 @@ import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
 import styles from './Dashboard.module.css';
 
-const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Kateqoriyalar', 'Sifarişlər', 'Analitika', 'Flaş Satış', 'Hekayələr'];
+const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Kateqoriyalar', 'Sifarişlər', 'Analitika', 'Flaş Satış', 'Rəylər'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Dashboard = () => {
     badges, addBadge, deleteBadge,
     collections, addCollection, deleteCollection,
     flashSale, updateFlashSale,
-    stories, addStory, deleteStory
+    deleteComment
   } = useProducts();
   const { orders, updateOrderStatus } = useOrders();
   const [activeTab, setActiveTab] = useState('Məhsullarım');
@@ -165,7 +165,7 @@ const Dashboard = () => {
                tab === 'Kateqoriyalar' ? <LayoutDashboard size={18} /> :
                tab === 'Analitika' ? <TrendingUp size={18} /> : 
                tab === 'Flaş Satış' ? <Zap size={18} /> : 
-               tab === 'Hekayələr' ? <Camera size={18} /> : 
+               tab === 'Rəylər' ? <MessageSquare size={18} /> : 
                <PlusCircle size={18} />}
               {tab}
             </button>
@@ -621,52 +621,102 @@ const Dashboard = () => {
                   </div>
                 </div>
               </motion.div>
-            ) : activeTab === 'Hekayələr' ? (
+            ) : activeTab === 'Rəylər' ? (
               <motion.div
-                key="stories_manage"
+                key="reviews_manage"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
               >
                 <div className={styles.sectionHeader}>
-                  <h2>Hekayə (Story) İdarəetməsi</h2>
-                  <p>Ana səhifə üçün yeni hekayələr əlavə edin.</p>
+                  <h2>Müştəri Rəylərinin İdarə Edilməsi</h2>
+                  <p>Məhsullarınıza yazılan rəyləri oxuyun, qiymətləndirmələri izləyin və lazım gəldikdə silin.</p>
                 </div>
 
-                <div className={styles.storiesManager}>
-                  <div className={styles.addStoryForm}>
-                    <div className={styles.formGroup}>
-                      <label>Hekayə Başlığı</label>
-                      <input id="storyLabel" type="text" placeholder="məs. Yeni Kolleksiya" />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Hekayə Şəkli (URL)</label>
-                      <input id="storyImg" type="text" placeholder="https://..." />
-                    </div>
-                    <button className={styles.addBtn} onClick={() => {
-                      const l = document.getElementById('storyLabel').value;
-                      const i = document.getElementById('storyImg').value;
-                      if(l && i) {
-                        addStory(i, l);
-                        document.getElementById('storyLabel').value = '';
-                        document.getElementById('storyImg').value = '';
+                <div className={styles.reviewsManagerList}>
+                  {(() => {
+                    const allComments = [];
+                    products.forEach(p => {
+                      if (p.comments && p.comments.length > 0) {
+                        p.comments.forEach(c => {
+                          allComments.push({
+                            ...c,
+                            productId: p.id,
+                            productName: p.name,
+                            productImg: p.img,
+                            productCat: p.category
+                          });
+                        });
                       }
-                    }}>Hekayə Əlavə Et</button>
-                  </div>
+                    });
 
-                  <div className={styles.storiesList}>
-                    {stories.map(story => (
-                      <div key={story.id} className={styles.storyManageItem}>
-                        <img src={story.img} alt="" />
-                        <div className={styles.storyInfo}>
-                          <h4>{story.label}</h4>
-                          <button onClick={() => deleteStory(story.id)} className={styles.storyDelete}>
-                            <Trash2 size={14} /> Sil
-                          </button>
+                    allComments.sort((a, b) => b.id - a.id);
+
+                    if (allComments.length === 0) {
+                      return (
+                        <div className={styles.noReviews}>
+                          <MessageSquare size={48} className={styles.noReviewsIcon} />
+                          <h3>Hələ ki, heç bir rəy yazılmayıb</h3>
+                          <p>Müştəriləriniz məhsullarınıza rəy yazdıqda burada görünəcək.</p>
                         </div>
+                      );
+                    }
+
+                    return (
+                      <div className={styles.reviewsGridContainer}>
+                        {allComments.map(comment => (
+                          <div key={comment.id} className={styles.reviewCardItem}>
+                            <div className={styles.reviewCardHeader}>
+                              <div className={styles.reviewProductMeta}>
+                                <img src={comment.productImg} alt="" className={styles.reviewProductImg} />
+                                <div className={styles.reviewProductInfo}>
+                                  <h4>{comment.productName}</h4>
+                                  <span>{categories.find(c => c.id === comment.productCat)?.label || comment.productCat}</span>
+                                </div>
+                              </div>
+                              <button 
+                                onClick={() => deleteComment(comment.productId, comment.id)} 
+                                className={styles.reviewDeleteBtn}
+                                title="Rəyi sil"
+                              >
+                                <Trash2 size={14} /> Sil
+                              </button>
+                            </div>
+
+                            <div className={styles.reviewCardBody}>
+                              <div className={styles.reviewerMetaRow}>
+                                <div className={styles.reviewerAvatar}>
+                                  {comment.name?.charAt(0).toUpperCase()}
+                                </div>
+                                <div className={styles.reviewerMain}>
+                                  <h5>{comment.name}</h5>
+                                  <div className={styles.reviewerRatingDate}>
+                                    <div className={styles.reviewStars}>
+                                      {[...Array(5)].map((_, i) => (
+                                        <svg 
+                                          key={i} 
+                                          width="14" 
+                                          height="14" 
+                                          viewBox="0 0 24 24" 
+                                          fill={i < comment.rating ? "var(--primary)" : "none"} 
+                                          stroke="var(--primary)" 
+                                          strokeWidth="2"
+                                        >
+                                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                        </svg>
+                                      ))}
+                                    </div>
+                                    <span className={styles.reviewDate}>{comment.date}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <p className={styles.reviewTextVal}>"{comment.text}"</p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })()}
                 </div>
               </motion.div>
             ) : (
