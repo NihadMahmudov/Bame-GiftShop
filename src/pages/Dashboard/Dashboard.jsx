@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, PlusCircle, Trash2,
   LogOut, Store, TrendingUp, ShoppingBag, Eye, ImagePlus,
-  ShoppingCart, Zap, Calendar, CheckCircle, Camera
+  ShoppingCart, Zap, Calendar, CheckCircle, Camera,
+  Phone, MapPin, User, Clock, MessageSquare, Check, Truck,
+  ChevronDown, ChevronUp, Mail, Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
@@ -35,9 +37,53 @@ const Dashboard = () => {
   const [newColl, setNewColl] = useState('');
   const [success, setSuccess] = useState(false);
 
+  // States for order management
+  const [expandedOrders, setExpandedOrders] = useState({});
+  const [orderSearchQuery, setOrderSearchQuery] = useState('');
+  const [selectedOrderFilter, setSelectedOrderFilter] = useState('all');
+
+  const toggleOrderExpand = (id) => {
+    setExpandedOrders(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const getOrderStatusStyle = (status) => {
+    switch (status) {
+      case 'pending':
+        return { label: 'Gözləmədə', color: '#ef6c00', icon: <Clock size={14} /> };
+      case 'approved':
+        return { label: 'Təsdiqləndi', color: '#1976d2', icon: <CheckCircle size={14} /> };
+      case 'shipped':
+        return { label: 'Yoldadır', color: '#7b1fa2', icon: <Truck size={14} /> };
+      case 'delivered':
+        return { label: 'Çatdırıldı', color: '#2e7d32', icon: <CheckCircle size={14} /> };
+      default:
+        return { label: 'Gözləmədə', color: '#ef6c00', icon: <Clock size={14} /> };
+    }
+  };
+
+  // Filter and search orders
+  const filteredOrders = orders.filter(o => {
+    if (selectedOrderFilter !== 'all' && o.status !== selectedOrderFilter) {
+      return false;
+    }
+    if (orderSearchQuery) {
+      const q = orderSearchQuery.toLowerCase();
+      const nameMatch = o.customerName?.toLowerCase().includes(q);
+      const idMatch = o.id?.toLowerCase().includes(q);
+      const phoneMatch = o.phone?.toLowerCase().includes(q);
+      return nameMatch || idMatch || phoneMatch;
+    }
+    return true;
+  });
+
   // Redirect if not logged in or not admin
+  React.useEffect(() => {
+    if (!user || user.role !== 'admin') {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
   if (!user || user.role !== 'admin') {
-    navigate('/');
     return null;
   }
 
@@ -629,36 +675,304 @@ const Dashboard = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
+                className={styles.ordersSection}
               >
-                <div className={styles.sectionHeader}>
-                  <h2>Bütün Sifarişlər ({orders.length})</h2>
-                </div>
-                <div className={styles.table}>
-                  <div className={styles.tableHeader}>
-                    <span>ID</span>
-                    <span>Müştəri</span>
-                    <span>Məbləğ</span>
-                    <span>Status</span>
-                    <span>Əməliyyat</span>
+                <div className={styles.ordersHeaderArea}>
+                  <div>
+                    <h2>Sifarişlərin İdarə Edilməsi</h2>
+                    <p>Müştərilərin verdiyi sifarişləri təsdiqləyin, yola salın və statuslarını izləyin.</p>
                   </div>
-                  {orders.map(o => (
-                    <div key={o.id} className={styles.tableRow}>
-                      <span>#{o.id.slice(-4)}</span>
-                      <span>{o.customerName}</span>
-                      <span className={styles.priceCell}>{o.total} AZN</span>
-                      <span className={styles.statusBadge}>{o.status}</span>
-                      <select 
-                        value={o.status} 
-                        onChange={(e) => updateOrderStatus(o.id, e.target.value)}
-                        className={styles.statusSelect}
-                      >
-                        <option value="pending">Gözləmədə</option>
-                        <option value="approved">Təsdiqləndi</option>
-                        <option value="shipped">Yoldadır</option>
-                        <option value="delivered">Çatdırıldı</option>
-                      </select>
-                    </div>
+                  
+                  {/* Search Bar */}
+                  <div className={styles.searchBar}>
+                    <Search size={18} />
+                    <input 
+                      type="text" 
+                      placeholder="Müştəri adı, ID və ya telefon..."
+                      value={orderSearchQuery}
+                      onChange={(e) => setOrderSearchQuery(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Status Filter Tabs */}
+                <div className={styles.orderFilters}>
+                  {[
+                    { id: 'all', label: 'Hamısı', count: orders.length, color: '#888' },
+                    { id: 'pending', label: 'Gözləmədə', count: orders.filter(o => o.status === 'pending').length, color: '#ef6c00' },
+                    { id: 'approved', label: 'Təsdiqləndi', count: orders.filter(o => o.status === 'approved').length, color: '#1976d2' },
+                    { id: 'shipped', label: 'Yoldadır', count: orders.filter(o => o.status === 'shipped').length, color: '#7b1fa2' },
+                    { id: 'delivered', label: 'Çatdırıldı', count: orders.filter(o => o.status === 'delivered').length, color: '#2e7d32' }
+                  ].map(tab => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      className={`${styles.filterTab} ${selectedOrderFilter === tab.id ? styles.filterTabActive : ''}`}
+                      onClick={() => setSelectedOrderFilter(tab.id)}
+                    >
+                      <span className={styles.filterDot} style={{ background: tab.color }}></span>
+                      <span className={styles.filterLabel}>{tab.label}</span>
+                      <span className={styles.filterCount} style={{ background: `${tab.color}15`, color: tab.color }}>
+                        {tab.count}
+                      </span>
+                    </button>
                   ))}
+                </div>
+
+                {/* Orders List Container */}
+                <div className={styles.ordersContainerList}>
+                  {filteredOrders.length === 0 ? (
+                    <div className={styles.noOrders}>
+                      <ShoppingBag size={48} className={styles.noOrdersIcon} />
+                      <h3>Sifariş tapılmadı</h3>
+                      <p>Seçilmiş filtr və ya axtarış meyarlarına uyğun sifariş yoxdur.</p>
+                    </div>
+                  ) : (
+                    filteredOrders.map(o => {
+                      const isExpanded = !!expandedOrders[o.id];
+                      const statusStyles = getOrderStatusStyle(o.status);
+                      const orderDateFormatted = new Date(o.createdAt || Date.now()).toLocaleString('az-AZ', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      });
+                      
+                      return (
+                        <div 
+                          key={o.id} 
+                          className={`${styles.orderNewCard} ${isExpanded ? styles.cardExpanded : ''}`}
+                        >
+                          {/* Order Card Header (Summarized Info) */}
+                          <div className={styles.orderCardHeader} onClick={() => toggleOrderExpand(o.id)}>
+                            <div className={styles.headerMainInfo}>
+                              <div className={styles.headerIdArea}>
+                                <span className={styles.idBadge}>#{o.id.slice(-6)}</span>
+                                <span className={styles.orderDateText}>
+                                  <Clock size={12} /> {orderDateFormatted}
+                                </span>
+                              </div>
+                              <div className={styles.headerCustomerArea}>
+                                <User size={16} className={styles.infoIcon} />
+                                <strong>{o.customerName}</strong>
+                              </div>
+                            </div>
+                            
+                            <div className={styles.headerRightInfo}>
+                              <div className={styles.headerPriceArea}>
+                                <span className={styles.itemCountText}>{o.items?.length || 0} məhsul</span>
+                                <strong className={styles.totalPriceText}>{o.total?.toFixed(2) || o.total} AZN</strong>
+                              </div>
+                              
+                              <span 
+                                className={styles.statusNewBadge}
+                                style={{ 
+                                  background: `${statusStyles.color}15`, 
+                                  color: statusStyles.color,
+                                  borderColor: `${statusStyles.color}30` 
+                                }}
+                              >
+                                {statusStyles.icon}
+                                {statusStyles.label}
+                              </span>
+                              
+                              <button className={styles.expandChevronBtn} type="button">
+                                {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Order Details (Expandable Pane) */}
+                          <AnimatePresence>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className={styles.orderExpandedContent}
+                              >
+                                <div className={styles.divider}></div>
+                                
+                                <div className={styles.expandedGrid}>
+                                  {/* Left: Customer info & delivery */}
+                                  <div className={styles.customerDetailsBox}>
+                                    <h4 className={styles.boxTitle}>Çatdırılma & Müştəri Məlumatları</h4>
+                                    <div className={styles.infoRows}>
+                                      <div className={styles.infoRowItem}>
+                                        <User size={16} className={styles.infoRowIcon} />
+                                        <div>
+                                          <p className={styles.rowLabel}>Müştəri</p>
+                                          <p className={styles.rowVal}>{o.customerName}</p>
+                                        </div>
+                                      </div>
+                                      <div className={styles.infoRowItem}>
+                                        <Mail size={16} className={styles.infoRowIcon} />
+                                        <div>
+                                          <p className={styles.rowLabel}>E-poçt</p>
+                                          <p className={styles.rowVal}>{o.userEmail || 'Daxil edilməyib'}</p>
+                                        </div>
+                                      </div>
+                                      <div className={styles.infoRowItem}>
+                                        <Phone size={16} className={styles.infoRowIcon} />
+                                        <div>
+                                          <p className={styles.rowLabel}>WhatsApp Nömrəsi</p>
+                                          <p className={styles.rowVal}>{o.phone || 'Daxil edilməyib'}</p>
+                                        </div>
+                                      </div>
+                                      <div className={styles.infoRowItem}>
+                                        <MapPin size={16} className={styles.infoRowIcon} />
+                                        <div>
+                                          <p className={styles.rowLabel}>Çatdırılma Ünvanı</p>
+                                          <p className={styles.rowVal}>{o.address || 'Qeyd olunmayıb'}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className={styles.customerActions}>
+                                      {o.phone && (
+                                        <a 
+                                          href={`https://wa.me/${o.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                                            `Salam ${o.customerName}, Bame Gift Shop-dan verdiyiniz #${o.id.slice(-6)} nömrəli sifarişiniz haqqında yazırıq. Sifarişiniz ${o.status === 'pending' ? 'qəbul edildi və təsdiq gözləyir.' : o.status === 'approved' ? 'təsdiqləndi və hazırlanır.' : o.status === 'shipped' ? 'yola salındı, kuryer tezliklə sizinlə əlaqə saxlayacak.' : 'çatdırıldı. Bizi seçdiyiniz üçün təşəkkür edirik! 😊'}`
+                                          )}`}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className={styles.whatsappBtn}
+                                        >
+                                          <MessageSquare size={16} /> WhatsApp ilə Əlaqə
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Right: Order items list */}
+                                  <div className={styles.orderItemsBox}>
+                                    <h4 className={styles.boxTitle}>Sifariş Olunan Məhsullar</h4>
+                                    <div className={styles.itemsScrollContainer}>
+                                      {o.items && o.items.map((item, index) => (
+                                        <div key={index} className={styles.itemDetailRow}>
+                                          <img 
+                                            src={item.img} 
+                                            alt={item.name} 
+                                            className={styles.detailItemImg} 
+                                            onError={e => { e.target.src = 'https://placehold.co/48x48/f5f0e8/D4AF37?text=B'; }}
+                                          />
+                                          <div className={styles.detailItemMain}>
+                                            <h5>{item.name}</h5>
+                                            <p>{item.quantity} ədəd × {item.price} AZN</p>
+                                          </div>
+                                          <span className={styles.detailItemTotal}>
+                                            {(item.price * item.quantity).toFixed(2)} AZN
+                                          </span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                    <div className={styles.orderTotalFooter}>
+                                      <span>Yekun Məbləğ:</span>
+                                      <strong>{o.total?.toFixed(2) || o.total} AZN</strong>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className={styles.divider}></div>
+
+                                {/* Order Status Stepper & Action Controls */}
+                                <div className={styles.statusStepperSection}>
+                                  <h4 className={styles.boxTitle}>Sifariş Statusu və İdarəedilməsi</h4>
+                                  
+                                  {/* Interactive progress bar */}
+                                  <div className={styles.stepperContainer}>
+                                    {[
+                                      { statusVal: 'pending', label: 'Gözləmədə', desc: 'Təsdiq gözləyir' },
+                                      { statusVal: 'approved', label: 'Təsdiqləndi', desc: 'Hazırlanır' },
+                                      { statusVal: 'shipped', label: 'Yoldadır', desc: 'Kuryerdədir' },
+                                      { statusVal: 'delivered', label: 'Çatdırıldı', desc: 'Təslim edildi' }
+                                    ].map((step, idx) => {
+                                      const stepsOrder = ['pending', 'approved', 'shipped', 'delivered'];
+                                      const currentIdx = stepsOrder.indexOf(o.status);
+                                      const isPassed = idx <= currentIdx;
+                                      const isActive = idx === currentIdx;
+                                      
+                                      return (
+                                        <div 
+                                          key={step.statusVal} 
+                                          className={`${styles.stepperStep} ${isPassed ? styles.stepPassed : ''} ${isActive ? styles.stepActive : ''}`}
+                                          onClick={() => updateOrderStatus(o.id, step.statusVal)}
+                                        >
+                                          <div className={styles.stepDotArea}>
+                                            <span className={styles.stepNumber}>
+                                              {isPassed && !isActive ? <Check size={12} /> : idx + 1}
+                                            </span>
+                                          </div>
+                                          <div className={styles.stepInfoArea}>
+                                            <span className={styles.stepText}>{step.label}</span>
+                                            <span className={styles.stepDesc}>{step.desc}</span>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+
+                                  {/* Fast Action Buttons */}
+                                  <div className={styles.adminActionControls}>
+                                    <span className={styles.actionPromptText}>Sürətli Əməliyyatlar:</span>
+                                    <div className={styles.actionButtonsRow}>
+                                      {o.status === 'pending' && (
+                                        <button 
+                                          type="button"
+                                          className={`${styles.actionBtn} ${styles.actionBtnApprove}`}
+                                          onClick={() => updateOrderStatus(o.id, 'approved')}
+                                        >
+                                          <CheckCircle size={16} /> Sifarişi Təsdiqlə
+                                        </button>
+                                      )}
+                                      
+                                      {(o.status === 'pending' || o.status === 'approved') && (
+                                        <button 
+                                          type="button"
+                                          className={`${styles.actionBtn} ${styles.actionBtnShip}`}
+                                          onClick={() => updateOrderStatus(o.id, 'shipped')}
+                                        >
+                                          <Truck size={16} /> Kuryerə Ver (Yola sal)
+                                        </button>
+                                      )}
+
+                                      {o.status !== 'delivered' && (
+                                        <button 
+                                          type="button"
+                                          className={`${styles.actionBtn} ${styles.actionBtnDeliver}`}
+                                          onClick={() => updateOrderStatus(o.id, 'delivered')}
+                                        >
+                                          <Check size={16} /> Çatdırıldı Olaraq Qeyd Et
+                                        </button>
+                                      )}
+
+                                      {/* Dropdown fallback just in case */}
+                                      <div className={styles.manualSelectContainer}>
+                                        <span>Statusu dəyiş:</span>
+                                        <select
+                                          value={o.status}
+                                          onChange={(e) => updateOrderStatus(o.id, e.target.value)}
+                                          className={styles.statusDirectSelect}
+                                        >
+                                          <option value="pending">Gözləmədə</option>
+                                          <option value="approved">Təsdiqləndi</option>
+                                          <option value="shipped">Yoldadır</option>
+                                          <option value="delivered">Çatdırıldı</option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </motion.div>
             ) }

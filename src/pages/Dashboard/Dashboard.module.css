@@ -1033,3 +1033,774 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ─── Premium Order Management Section ─── */
+.ordersSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ordersHeaderArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.ordersHeaderArea h2 {
+  font-size: 1.5rem;
+  color: var(--secondary);
+  font-family: var(--font-serif);
+  margin-bottom: 6px;
+}
+
+.ordersHeaderArea p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-offset);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  width: 100%;
+  max-width: 380px;
+  transition: var(--transition);
+}
+
+.searchBar:focus-within {
+  border-color: var(--primary);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+.searchBar input {
+  border: none;
+  background: none;
+  outline: none;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.searchBar svg {
+  color: var(--text-muted);
+}
+
+/* Status Filter Tabs */
+.orderFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+}
+
+.filterTab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.filterTab:hover {
+  border-color: var(--primary);
+  color: var(--secondary);
+  transform: translateY(-1px);
+}
+
+.filterTabActive {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--white) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme='dark'] .filterTabActive {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--secondary) !important;
+}
+
+.filterDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.filterCount {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.filterTabActive .filterCount {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: var(--white) !important;
+}
+
+[data-theme='dark'] .filterTabActive .filterCount {
+  background: rgba(0, 0, 0, 0.1) !important;
+  color: var(--secondary) !important;
+}
+
+/* Orders List */
+.ordersContainerList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.noOrders {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: var(--bg-offset);
+  border-radius: 16px;
+  border: 1px dashed var(--border);
+}
+
+.noOrdersIcon {
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.noOrders h3 {
+  font-size: 1.2rem;
+  color: var(--secondary);
+  margin-bottom: 6px;
+}
+
+.noOrders p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+/* Order Card */
+.orderNewCard {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+}
+
+.orderNewCard:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.cardExpanded {
+  border-color: var(--primary);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.08);
+}
+
+.orderCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  user-select: none;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.headerMainInfo {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.headerIdArea {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.idBadge {
+  font-family: monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--secondary);
+  background: var(--primary-light);
+  padding: 4px 10px;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+}
+
+.orderDateText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.headerCustomerArea {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--secondary);
+}
+
+.infoIcon {
+  color: var(--primary);
+}
+
+.headerRightInfo {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.headerPriceArea {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.itemCountText {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.totalPriceText {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--secondary);
+}
+
+.statusNewBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.expandChevronBtn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.orderNewCard:hover .expandChevronBtn {
+  background: var(--bg-offset);
+  color: var(--secondary);
+}
+
+/* Expanded Content */
+.orderExpandedContent {
+  padding: 0 24px 24px 24px;
+  overflow: hidden;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.expandedGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+
+/* Left Customer Info Card */
+.customerDetailsBox {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.boxTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--secondary);
+  margin-bottom: 16px;
+  position: relative;
+  padding-left: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.boxTitle::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.infoRows {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.infoRowItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.infoRowIcon {
+  color: var(--primary);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.rowLabel {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.rowVal {
+  font-size: 0.9rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.customerActions {
+  display: flex;
+  gap: 12px;
+}
+
+.whatsappBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #25d366;
+  color: white !important;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 18px;
+  border-radius: 10px;
+  transition: var(--transition);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+  width: 100%;
+}
+
+.whatsappBtn:hover {
+  background: #128c7e;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3);
+}
+
+/* Right Ordered Products list */
+.orderItemsBox {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.itemsScrollContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 230px;
+  overflow-y: auto;
+  padding-right: 8px;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.itemsScrollContainer::-webkit-scrollbar {
+  width: 5px;
+}
+
+.itemsScrollContainer::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.itemDetailRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.itemDetailRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.detailItemImg {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--white);
+  border: 1px solid var(--border);
+}
+
+.detailItemMain {
+  flex: 1;
+}
+
+.detailItemMain h5 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--secondary);
+  margin-bottom: 2px;
+}
+
+.detailItemMain p {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.detailItemTotal {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.orderTotalFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 2px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.orderTotalFooter span {
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.orderTotalFooter strong {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+/* Stepper Section */
+.statusStepperSection {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stepperContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  position: relative;
+  padding: 10px 0;
+}
+
+.stepperStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  z-index: 2;
+  transition: var(--transition);
+}
+
+.stepperStep::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  width: 100%;
+  height: 3px;
+  background: var(--border);
+  z-index: -1;
+  transition: var(--transition);
+}
+
+.stepperStep:last-child::after {
+  display: none;
+}
+
+.stepDotArea {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  transition: var(--transition);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-light);
+}
+
+.stepInfoArea {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stepText {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.stepDesc {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* Passed Stepper Styles */
+.stepPassed .stepDotArea {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.stepPassed .stepText {
+  color: var(--primary);
+}
+
+.stepPassed::after {
+  background: var(--primary);
+}
+
+/* Active Stepper Styles */
+.stepActive .stepDotArea {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--secondary);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.25);
+  transform: scale(1.1);
+}
+
+.stepActive .stepText {
+  color: var(--secondary);
+  font-weight: 800;
+}
+
+[data-theme='dark'] .stepActive .stepText {
+  color: var(--primary);
+}
+
+.stepActive .stepDesc {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Admin Action Controls */
+.adminActionControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--border);
+  flex-wrap: wrap;
+}
+
+.actionPromptText {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.actionButtonsRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.actionBtnApprove {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid rgba(25, 118, 210, 0.2);
+}
+
+.actionBtnApprove:hover {
+  background: #1976d2;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.actionBtnShip {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border: 1px solid rgba(123, 31, 162, 0.2);
+}
+
+.actionBtnShip:hover {
+  background: #7b1fa2;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.actionBtnDeliver {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid rgba(46, 125, 50, 0.2);
+}
+
+.actionBtnDeliver:hover {
+  background: #2e7d32;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.manualSelectContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-left: 10px;
+}
+
+.statusDirectSelect {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-family: var(--font-sans);
+  outline: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.statusDirectSelect:focus {
+  border-color: var(--primary);
+}
+
+/* Dark Theme Specifics */
+[data-theme='dark'] .customerDetailsBox,
+[data-theme='dark'] .orderItemsBox,
+[data-theme='dark'] .statusStepperSection {
+  background: #121212;
+}
+
+[data-theme='dark'] .statusDirectSelect {
+  background: #1a1a1a;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .expandedGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .stepperContainer {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding-left: 20px;
+  }
+  .stepperStep {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+    gap: 16px;
+  }
+  .stepperStep::after {
+    width: 3px;
+    height: 100%;
+    left: 18px;
+    top: 36px;
+  }
+  .stepDotArea {
+    margin-bottom: 0;
+  }
+  .adminActionControls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .actionButtonsRow {
+    justify-content: flex-start;
+    width: 100%;
+  }
+  .manualSelectContainer {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+

@@ -27,8 +27,13 @@ const UserPanel = () => {
     { id: 'orders', label: 'Sifarişlərim', icon: <Package size={20} />, count: null }
   ];
 
+  React.useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
   if (!user) {
-    navigate('/login');
     return null;
   }
 
