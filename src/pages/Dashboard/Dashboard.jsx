@@ -5,7 +5,7 @@ import {
   LogOut, Store, TrendingUp, ShoppingBag, Eye, ImagePlus,
   ShoppingCart, Zap, Calendar, CheckCircle, Camera,
   Phone, MapPin, User, Clock, MessageSquare, Check, Truck,
-  ChevronDown, ChevronUp, Mail, Search
+  ChevronDown, ChevronUp, Mail, Search, Tag
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
@@ -262,86 +262,130 @@ const Dashboard = () => {
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className={styles.form}>
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label>Məhsul Adı *</label>
-                      <input name="name" value={form.name} onChange={handleChange}
-                        placeholder="məs. Qızılı Boyunbağı" required />
+                <form onSubmit={handleSubmit} className={styles.premiumForm}>
+                  
+                  {/* Left Column: Main Info */}
+                  <div className={styles.formColumn}>
+                    <div className={styles.formSectionBox}>
+                      <h3 className={styles.boxTitle}>Əsas Məlumatlar</h3>
+                      
+                      <div className={styles.formGroup}>
+                        <label>Məhsul Adı *</label>
+                        <div className={styles.inputWrapper}>
+                          <Package size={18} className={styles.inputIcon} />
+                          <input name="name" value={form.name} onChange={handleChange} placeholder="məs. Qızılı Boyunbağı" required />
+                        </div>
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label>Məhsulun Təsviri</label>
+                        <textarea 
+                          name="description" 
+                          value={form.description} 
+                          onChange={handleChange} 
+                          placeholder="Məhsul haqqında geniş və cəlbedici məlumat yazın..." 
+                          rows="4"
+                          className={styles.premiumTextarea}
+                        />
+                      </div>
+
+                      <div className={styles.formRow}>
+                        <div className={styles.formGroup}>
+                          <label>Qiymət (AZN) *</label>
+                          <div className={styles.inputWrapper}>
+                            <span className={styles.currencySymbol}>₼</span>
+                            <input name="price" type="number" value={form.price} onChange={handleChange} placeholder="0.00" required />
+                          </div>
+                        </div>
+                        <div className={styles.formGroup}>
+                          <label>Köhnə Qiymət (AZN)</label>
+                          <div className={styles.inputWrapper}>
+                            <span className={styles.currencySymbol}>₼</span>
+                            <input name="oldPrice" type="number" value={form.oldPrice} onChange={handleChange} placeholder="0.00" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className={styles.formGroup}>
-                      <label>Kateqoriya *</label>
-                      <select name="category" value={form.category} onChange={handleChange}>
-                        {categories.filter(c => c.id !== 'all').map(c => (
-                          <option key={c.id} value={c.id}>{c.label}</option>
-                        ))}
-                      </select>
+
+                    <div className={styles.formSectionBox}>
+                      <h3 className={styles.boxTitle}>Kolleksiya və Bölmələr</h3>
+                      <p className={styles.boxSubTitle}>Məhsulun hansı xüsusi səhifələrdə görünəcəyini seçin.</p>
+                      <div className={styles.pillsGrid}>
+                        {collections.map(opt => {
+                          const isChecked = form.collections.includes(opt.id);
+                          return (
+                            <button 
+                              type="button"
+                              key={opt.id} 
+                              className={`${styles.collectionPill} ${isChecked ? styles.pillActive : ''}`}
+                              onClick={() => handleCollectionChange(opt.id)}
+                            >
+                              {isChecked ? <CheckCircle size={16} /> : <PlusCircle size={16} />}
+                              <span>{opt.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
 
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label>Qiymət (AZN) *</label>
-                      <input name="price" type="number" value={form.price}
-                        onChange={handleChange} placeholder="məs. 45" required />
+                  {/* Right Column: Meta Info & Media */}
+                  <div className={styles.formColumn}>
+                    <div className={styles.formSectionBox}>
+                      <h3 className={styles.boxTitle}>Kateqoriya & Etiket</h3>
+                      <div className={styles.formGroup}>
+                        <label>Kateqoriya *</label>
+                        <div className={styles.inputWrapper}>
+                          <LayoutDashboard size={18} className={styles.inputIcon} />
+                          <select name="category" value={form.category} onChange={handleChange}>
+                            {categories.filter(c => c.id !== 'all').map(c => (
+                              <option key={c.id} value={c.id}>{c.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label>Özəl Etiket (Badge)</label>
+                        <div className={styles.inputWrapper}>
+                          <Tag size={18} className={styles.inputIcon} />
+                          <select name="badge" value={form.badge} onChange={handleChange}>
+                            <option value="">Heç biri (Seçilməyib)</option>
+                            {badges.map(b => (
+                              <option key={b} value={b}>{b}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
                     </div>
-                    <div className={styles.formGroup}>
-                      <label>Köhnə Qiymət (AZN)</label>
-                      <input name="oldPrice" type="number" value={form.oldPrice}
-                        onChange={handleChange} placeholder="məs. 60 (isteğe bağlı)" />
+
+                    <div className={styles.formSectionBox}>
+                      <h3 className={styles.boxTitle}>Məhsul Şəkli *</h3>
+                      <div className={styles.imageUploadBox}>
+                        <input type="file" accept="image/*" onChange={handleImageUpload} required={!form.img} />
+                        {form.img ? (
+                          <div className={styles.imgPreviewContainer}>
+                            <img src={form.img} alt="preview" className={styles.imgPreviewFull} />
+                            <div className={styles.changeImgOverlay}>
+                              <Camera size={24} />
+                              <span>Şəkli Dəyişdir</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className={styles.uploadIconWrapper}>
+                              <ImagePlus size={32} />
+                            </div>
+                            <div className={styles.uploadText}>Şəkil yükləmək üçün bura tıklayın</div>
+                            <div className={styles.uploadSub}>və ya faylı sürükləyin (PNG, JPG)</div>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label>Etiket (Badge)</label>
-                      <select name="badge" value={form.badge} onChange={handleChange}>
-                        <option value="">Heç biri</option>
-                        {badges.map(b => (
-                          <option key={b} value={b}>{b}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Məhsulun Təsviri</label>
-                      <input name="description" value={form.description} onChange={handleChange} placeholder="Məhsul haqqında qısa məlumat" />
-                    </div>
-                  </div>
-
-                  <div className={styles.formGroup} style={{ gridColumn: '1/-1' }}>
-                    <label>Xüsusi Kolleksiyalar (Həmin bölmələrə düşməsi üçün seçin)</label>
-                    <div className={styles.collectionsGrid}>
-                      {collections.map(opt => (
-                        <label key={opt.id} className={styles.checkboxLabel}>
-                          <input 
-                            type="checkbox" 
-                            checked={form.collections.includes(opt.id)}
-                            onChange={() => handleCollectionChange(opt.id)}
-                          />
-                          <span>{opt.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className={styles.formGroup} style={{ gridColumn: '1/-1' }}>
-                    <label>Məhsul Şəkli *</label>
-                    <div className={styles.imageUploadBox}>
-                      <input type="file" accept="image/*" onChange={handleImageUpload} required={!form.img} />
-                      {form.img ? (
-                        <img src={form.img} alt="preview" className={styles.imgPreviewFull} />
-                      ) : (
-                        <>
-                          <ImagePlus size={40} className={styles.uploadIcon} />
-                          <div className={styles.uploadText}>Şəkil yükləmək üçün bura tıklayın və ya sürükləyin</div>
-                          <div className={styles.uploadSub}>PNG, JPG, WEBP (maks. 5MB)</div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  <button type="submit" className={styles.submitBtn}>
-                    <PlusCircle size={18} /> Məhsulu Əlavə Et
+                  <button type="submit" className={styles.submitBtnLarge}>
+                    <PlusCircle size={20} /> Yeni Məhsulu Mağazaya Əlavə Et
                   </button>
                 </form>
               </motion.div>
