@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Package, PlusCircle, Trash2,
   LogOut, Store, TrendingUp, ShoppingBag, Eye, ImagePlus,
   ShoppingCart, Zap, Calendar, CheckCircle, Camera,
-  Phone, MapPin, User, Clock, MessageSquare, Check, Truck,
+  Phone, MapPin, User, Users, Clock, MessageSquare, Check, Truck,
   ChevronDown, ChevronUp, Mail, Search, Tag
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,11 +13,11 @@ import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
 import styles from './Dashboard.module.css';
 
-const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Kateqoriyalar', 'Sifarişlər', 'Analitika', 'Flaş Satış', 'Rəylər'];
+const TABS = ['Məhsullarım', 'Məhsul Əlavə Et', 'Kateqoriyalar', 'Sifarişlər', 'Analitika', 'Flaş Satış', 'Rəylər', 'Müştərilər'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, users, logout, deleteUser } = useAuth();
   const { 
     products, addProduct, deleteProduct, 
     categories, addCategory, deleteCategory, updateCategoryImage,
@@ -166,6 +166,7 @@ const Dashboard = () => {
                tab === 'Analitika' ? <TrendingUp size={18} /> : 
                tab === 'Flaş Satış' ? <Zap size={18} /> : 
                tab === 'Rəylər' ? <MessageSquare size={18} /> : 
+               tab === 'Müştərilər' ? <Users size={18} /> : 
                <PlusCircle size={18} />}
               {tab}
             </button>
@@ -761,6 +762,71 @@ const Dashboard = () => {
                       </div>
                     );
                   })()}
+                </div>
+              </motion.div>
+            ) : activeTab === 'Müştərilər' ? (
+              <motion.div
+                key="crm_manage"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className={styles.sectionHeader}>
+                  <h2>Müştərilər Bazası (CRM)</h2>
+                  <p>Saytınızda qeydiyyatdan keçmiş bütün müştəriləri buradan izləyə bilərsiniz.</p>
+                </div>
+
+                <div className={styles.crmContainer}>
+                  {!users || users.length === 0 ? (
+                    <div className={styles.noReviews}>
+                      <Users size={48} className={styles.noReviewsIcon} />
+                      <h3>Hələ ki, müştəri yoxdur</h3>
+                      <p>Qeydiyyatdan keçən müştərilər burada görünəcək.</p>
+                    </div>
+                  ) : (
+                    <div className={styles.crmGrid}>
+                      {users.map((u, idx) => {
+                        const isMaster = u.email === 'bame@gmail.com';
+                        const userOrders = orders.filter(o => (o.customerName || o.clientName || '').toLowerCase() === (u.name || '').toLowerCase());
+                        
+                        return (
+                          <div key={idx} className={styles.crmCard}>
+                            <div className={styles.crmCardHeader}>
+                              <div className={styles.crmAvatar}>
+                                {(u.name || u.email || 'U').charAt(0).toUpperCase()}
+                              </div>
+                              <div className={styles.crmInfo}>
+                                <h4>{u.name || 'Adsız İstifadeçi'}</h4>
+                                <span>{u.email}</span>
+                              </div>
+                            </div>
+                            <div className={styles.crmStats}>
+                              <div className={styles.crmStatItem}>
+                                <span>Rol</span>
+                                <strong className={isMaster ? styles.adminRoleTxt : ''}>{u.role === 'admin' ? 'İdarəçi' : 'Müştəri'}</strong>
+                              </div>
+                              <div className={styles.crmStatItem}>
+                                <span>Sifarişlər</span>
+                                <strong>{userOrders.length}</strong>
+                              </div>
+                            </div>
+                            {!isMaster && (
+                              <button 
+                                className={styles.crmDeleteBtn}
+                                onClick={() => {
+                                  if(window.confirm('Bu müştərini sistemdən silmək istədiyinizə əminsiniz?')) {
+                                    deleteUser(u.email);
+                                  }
+                                }}
+                              >
+                                <Trash2 size={14} /> Sil
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ) : (

@@ -214,23 +214,70 @@
 @media (max-width: 768px) {
   .cartContent {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .cartItem {
     flex-wrap: wrap;
     gap: 1rem;
+    padding: 1rem;
+    position: relative;
+  }
+
+  .itemImage {
+    width: 60px;
+    height: 60px;
   }
 
   .itemDetails {
-    min-width: 150px;
+    min-width: 120px;
+    flex: 1;
+    margin-left: 0.5rem;
+  }
+  
+  .itemDetails h3 {
+    font-size: 1rem;
+  }
+
+  .quantityControls {
+    margin-left: auto;
+    padding: 0.3rem;
+  }
+  
+  .quantityControls button {
+    padding: 6px;
   }
 
   .itemTotal {
-    margin: 0;
+    width: 100%;
+    text-align: right;
+    margin: 0.5rem 0 0 0;
+    font-size: 1.1rem;
+  }
+  
+  .removeBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 8px;
+  }
+  
+  .cartContainer {
+    padding: 2rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .cartSummary {
+    padding: 1.5rem;
+  }
+  
+  .title {
+    font-size: 1.6rem;
   }
 }
 
 .inPanel {
-  padding: 2rem;
+  padding: 2rem 0;
   width: 100%;
 }

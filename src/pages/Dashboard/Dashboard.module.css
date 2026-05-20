@@ -2201,3 +2201,231 @@
 [data-theme='dark'] .formSectionBox {
   background: #121212;
 }
+
+/* ─── Premium CRM Styles ─── */
+.crmContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.crmGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.crmCard {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+}
+
+.crmCard:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.crmCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+}
+
+.crmAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-offset);
+  color: var(--secondary);
+  border: 2px solid var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.crmInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.crmInfo h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--secondary);
+}
+
+.crmInfo span {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.crmStats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.crmStatItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.crmStatItem span {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.crmStatItem strong {
+  font-size: 1.1rem;
+  color: var(--secondary);
+  font-weight: 800;
+}
+
+.adminRoleTxt {
+  color: var(--primary) !important;
+}
+
+.crmDeleteBtn {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: rgba(230, 57, 70, 0.05);
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  color: #e63946;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.crmDeleteBtn:hover {
+  background: #e63946;
+  color: white;
+  border-color: #e63946;
+  transform: translateY(-1px);
+}
+
+[data-theme='dark'] .crmCard {
+  background: #121212;
+}
+
+/* ─── Responsive Dashboard ─── */
+@media (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .page {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: static;
+    height: auto;
+    padding: 20px;
+    flex-direction: column;
+    z-index: 100;
+  }
+
+  .sideNav {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    gap: 10px;
+    /* Hide scrollbar for a cleaner look */
+    scrollbar-width: none; 
+    -ms-overflow-style: none;
+  }
+  
+  .sideNav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navItem {
+    white-space: nowrap;
+    padding: 10px 16px;
+    flex-shrink: 0;
+  }
+
+  .main {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .storeInfo {
+    margin-bottom: 20px;
+  }
+
+  .logoutBtn {
+    margin-top: 10px;
+    width: max-content;
+  }
+  
+  .crmGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .premiumForm {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .headerArea {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .searchBar {
+    width: 100%;
+  }
+
+  .productGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .ordersHeaderArea {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .mainHeader h1 {
+    font-size: 1.4rem;
+  }
+  
+  .formSectionBox {
+    padding: 20px;
+  }
+}

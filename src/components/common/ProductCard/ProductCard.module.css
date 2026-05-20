@@ -209,3 +209,41 @@
   color: #f97316;
   font-weight: 500;
 }
+
+/* ─── Touch Device Optimizations ─── */
+@media (max-width: 768px) {
+  .quickAdd {
+    position: static;
+    opacity: 1;
+    transform: none;
+    padding: 12px;
+    margin-top: 10px;
+    background: transparent;
+  }
+  
+  .card:hover .quickAdd {
+    transform: none;
+  }
+  
+  .quickAddBtn {
+    padding: 12px;
+    font-size: 0.95rem;
+    background: #1f2937;
+    color: white;
+  }
+  
+  .wishlistBtn {
+    width: 44px;
+    height: 44px;
+    top: 12px;
+    right: 12px;
+  }
+  
+  .price {
+    font-size: 1.5rem;
+  }
+  
+  .name {
+    font-size: 1.1rem;
+  }
+}

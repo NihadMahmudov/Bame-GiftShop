@@ -428,18 +428,23 @@
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
   .toolBar {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+  }
+  
+  .searchBox {
+    max-width: 100%;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .catBtn {
@@ -454,6 +459,11 @@
 
   .searchBox {
     min-width: unset;
+  }
+  
+  .shopContainer {
+    padding-top: 20px;
+    padding-bottom: 40px;
   }
 }
 

@@ -51,10 +51,17 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => setUser(null);
 
+  const deleteUser = (email) => {
+    if (email === 'bame@gmail.com') return; // Qoruma (Master Admin silinə bilməz)
+    const updatedUsers = users.filter(u => u.email !== email);
+    setUsers(updatedUsers);
+    localStorage.setItem('bame_users_db', JSON.stringify(updatedUsers));
+  };
+
   const isAdmin = user?.role === 'admin';
 
   return (
-    <AuthContext.Provider value={{ user, register, login, logout, isAdmin }}>
+    <AuthContext.Provider value={{ user, users, register, login, logout, isAdmin, deleteUser }}>
       {children}
     </AuthContext.Provider>
   );
