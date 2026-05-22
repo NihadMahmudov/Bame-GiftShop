@@ -12,7 +12,12 @@ const ProductCard = ({ product }) => {
   const isLiked = isInWishlist(product.id);
   const [added, setAdded] = useState(false);
 
-  const handleAddToCart = () => {
+  const discountPercent = product.oldPrice
+    ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+    : null;
+
+  const handleAddToCart = (e) => {
+    e?.stopPropagation();
     addToCart(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -22,13 +27,14 @@ const ProductCard = ({ product }) => {
     <motion.div
       className={styles.card}
       layout
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.25 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ duration: 0.2 }}
     >
+      {/* ─── Image Section ─── */}
       <div className={styles.imageWrapper}>
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/product/${product.id}`} tabIndex={-1}>
           <img
             src={product.img}
             alt={product.name}
@@ -39,39 +45,47 @@ const ProductCard = ({ product }) => {
             }}
           />
         </Link>
+
+        {/* Top Badge */}
         {product.badge && (
-          <span className={styles.badge}>
-            {product.badge === 'Bestseller' ? 'Ən çox satılan məhsul' : product.badge === 'Yeni' ? 'Yeni gələn məhsul' : product.badge}
+          <span className={styles.topBadge}>
+            {product.badge === 'Bestseller' ? '🏆 Ən çox satılan' : product.badge === 'Yeni' ? '✨ Yeni' : product.badge}
           </span>
         )}
+
+        {/* Wishlist Button */}
         <button
           className={`${styles.wishlistBtn} ${isLiked ? styles.wishlisted : ''}`}
-          onClick={() => toggleWishlist(product)}
+          onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }}
+          aria-label={isLiked ? 'Bəyəndiklərdən çıxart' : 'Bəyəndiklərə əlavə et'}
         >
-          <Heart size={18} fill={isLiked ? 'currentColor' : 'none'} color={isLiked ? 'currentColor' : '#6b7280'} />
+          <Heart size={15} fill={isLiked ? 'currentColor' : 'none'} />
         </button>
+
+        {/* Desktop Hover Quick-Add */}
         <div className={styles.quickAdd}>
-          <button 
-            className={`${styles.quickAddBtn} ${added ? styles.added : ''}`} 
+          <button
+            className={`${styles.quickAddBtn} ${added ? styles.added : ''}`}
             onClick={handleAddToCart}
-            style={added ? { backgroundColor: '#10b981', color: 'white' } : {}}
           >
-            {added ? <Check size={16} /> : <ShoppingCart size={16} />} 
-            {added ? ' Əlavə edildi' : ' Səbətə At'}
+            {added ? <Check size={15} /> : <ShoppingCart size={15} />}
+            {added ? 'Əlavə edildi!' : 'Səbətə At'}
           </button>
         </div>
       </div>
 
+      {/* ─── Info Section ─── */}
       <div className={styles.cardBody}>
         <Link to={`/product/${product.id}`} style={{ textDecoration: 'none' }}>
           <h3 className={styles.name}>{product.name}</h3>
         </Link>
+
         <div className={styles.ratingRow}>
           <div className={styles.stars}>
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                size={12}
+                size={10}
                 fill={i < Math.floor(product.rating) ? '#f59e0b' : 'none'}
                 color={i < Math.floor(product.rating) ? '#f59e0b' : '#d1d5db'}
               />
@@ -80,26 +94,28 @@ const ProductCard = ({ product }) => {
           <span className={styles.reviewCount}>({product.reviews})</span>
         </div>
 
-        <div className={styles.discountTag}>
-          <span className={styles.tagIcon}>🏷️</span>
-          <span>əlavə endirim</span>
-        </div>
-
         <div className={styles.priceContainer}>
           <div className={styles.priceRow}>
-            {product.oldPrice && (
-              <span className={styles.discountBadge}>
-                -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
-              </span>
+            {discountPercent && (
+              <span className={styles.discountBadge}>-{discountPercent}%</span>
             )}
             <span className={styles.price}>{product.price} ₼</span>
             {product.oldPrice && (
               <span className={styles.oldPrice}>{product.oldPrice} ₼</span>
             )}
           </div>
-          <p className={styles.unitPrice}>({(product.price * 0.8).toFixed(2)} ₼ / Servis)</p>
         </div>
       </div>
+
+      {/* Mobile Add Button (always visible on mobile) */}
+      <button
+        className={`${styles.mobileAddBtn} ${added ? styles.mobileAdded : ''}`}
+        onClick={handleAddToCart}
+        aria-label="Səbətə əlavə et"
+      >
+        {added ? <Check size={15} /> : <ShoppingCart size={15} />}
+        {added ? 'Əlavə edildi!' : 'Səbətə At'}
+      </button>
     </motion.div>
   );
 };

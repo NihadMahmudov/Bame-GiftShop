@@ -51,7 +51,7 @@ const UserPanel = () => {
 
         <div className={styles.userInfo}>
           <div className={styles.avatar}>
-            <UserIcon size={30} />
+            {user.name.charAt(0).toUpperCase()}
           </div>
           <div className={styles.userDetails}>
             <h3>{user.name}</h3>
@@ -73,11 +73,10 @@ const UserPanel = () => {
               {tab.count > 0 && <span className={styles.badge}>{tab.count}</span>}
             </button>
           ))}
+          <button className={styles.logoutBtn} onClick={handleLogout}>
+            <LogOut size={18} /> Çıxış
+          </button>
         </nav>
-
-        <button className={styles.logoutBtn} onClick={handleLogout}>
-          <LogOut size={20} /> Çıxış
-        </button>
       </aside>
 
       <main className={styles.mainContent}>

@@ -1,34 +1,44 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Home, Compass, ShoppingBag, User, Heart } from 'lucide-react';
+import { useCart } from '../../../context/CartContext';
+import { useWishlist } from '../../../context/WishlistContext';
+import { useAuth } from '../../../context/AuthContext';
 import styles from './BottomBar.module.css';
 
 const BottomBar = () => {
+  const { cartItemCount } = useCart();
+  const { wishlist } = useWishlist();
+  const { user } = useAuth();
+
+  const navItems = [
+    { to: '/', icon: <Home size={22} />, label: 'Əsas' },
+    { to: '/categories', icon: <Compass size={22} />, label: 'Kateq.' },
+    { to: '/wishlist', icon: <Heart size={22} />, label: 'Sevimlilər', count: wishlist.length },
+    { to: '/cart', icon: <ShoppingBag size={22} />, label: 'Səbət', count: cartItemCount },
+    { to: user ? '/panel' : '/login', icon: <User size={22} />, label: user ? 'Hesabım' : 'Giriş' },
+  ];
+
   return (
     <nav className={styles.bottomBar}>
-      <NavLink to="/" className={({ isActive }) => isActive ? `${styles.navItem} ${styles.active}` : styles.navItem}>
-        <Home size={24} />
-        <span>Əsas səhifə</span>
-      </NavLink>
-      <NavLink to="/categories" className={({ isActive }) => isActive ? `${styles.navItem} ${styles.active}` : styles.navItem}>
-        <Compass size={24} />
-        <span>Kateqoriyalar</span>
-      </NavLink>
-      <NavLink to="/wishlist" className={({ isActive }) => isActive ? `${styles.navItem} ${styles.active}` : styles.navItem}>
-        <Heart size={24} />
-        <span>Sevimlilərim</span>
-      </NavLink>
-      <NavLink to="/cart" className={({ isActive }) => isActive ? `${styles.navItem} ${styles.active}` : styles.navItem}>
-        <div className={styles.cartIconWrapper}>
-          <ShoppingBag size={24} />
-          <span className={styles.badge}>0</span>
-        </div>
-        <span>Səbətim</span>
-      </NavLink>
-      <NavLink to="/panel" className={({ isActive }) => isActive ? `${styles.navItem} ${styles.active}` : styles.navItem}>
-        <User size={24} />
-        <span>Hesabım</span>
-      </NavLink>
+      {navItems.map((item) => (
+        <NavLink
+          key={item.to}
+          to={item.to}
+          className={({ isActive }) =>
+            `${styles.navItem} ${isActive ? styles.active : ''}`
+          }
+          end={item.to === '/'}
+        >
+          <div className={styles.iconWrap}>
+            {item.icon}
+            {item.count > 0 && (
+              <span className={styles.badge}>{item.count > 9 ? '9+' : item.count}</span>
+            )}
+          </div>
+          <span>{item.label}</span>
+        </NavLink>
+      ))}
     </nav>
   );
 };

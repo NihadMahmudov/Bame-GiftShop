@@ -1,29 +1,39 @@
+/* ═══════════════════════════════════════════════════
+   CATEGORIES PAGE — Mobile-First
+   Sidebar (left) + Content grid
+   Sidebar collapses on mobile to a top tab strip
+═══════════════════════════════════════════════════ */
+
 .pageContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background: #f5f5f5;
+  min-height: 100vh;
+  background: var(--bg);
   font-family: var(--font-sans);
+  overflow-x: hidden;
 }
 
 /* ─── Search Header ─── */
 .searchHeader {
   background: var(--white);
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .searchBox {
   display: flex;
   align-items: center;
-  background: #f0f0f0;
+  background: var(--bg-alt);
   border-radius: 50px;
-  padding: 10px 16px;
-  gap: 10px;
+  padding: 9px 14px;
+  gap: 8px;
 }
 
 .searchIcon {
-  color: #f97316; /* Orange color from screenshot */
+  color: var(--primary);
   flex-shrink: 0;
 }
 
@@ -31,14 +41,14 @@
   flex: 1;
   border: none;
   background: transparent;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text);
   outline: none;
   font-family: inherit;
 }
 
 .searchBox input::placeholder {
-  color: #999;
+  color: var(--text-muted);
 }
 
 /* ─── Main Layout ─── */
@@ -46,74 +56,88 @@
   display: flex;
   flex: 1;
   overflow: hidden;
+  min-height: 0;
 }
 
-/* ─── Sidebar ─── */
+/* ─── Sidebar (mobile: narrow fixed width) ─── */
 .sidebar {
-  width: 140px;
-  background: #fcfcfc;
+  width: 80px;
+  background: var(--white);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebarItem {
-  padding: 16px 12px;
+  padding: 12px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  color: #777;
+  color: var(--text-muted);
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  line-height: 1.3;
+  transition: all 0.25s ease;
+  line-height: 1.2;
+  font-family: inherit;
 }
 
 .tabIcon {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  background: #f0f0f0;
-  color: #888;
-  transition: all 0.3s ease;
+  border-radius: 10px;
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  transition: all 0.25s ease;
+  flex-shrink: 0;
 }
 
 .sidebarItem.active {
-  background: var(--white);
-  color: #f97316;
+  color: var(--primary);
 }
 
 .sidebarItem.active .tabIcon {
-  background: rgba(249, 115, 22, 0.1);
-  color: #f97316;
-  transform: scale(1.1);
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--primary);
 }
 
 .tabLabel {
   display: block;
+  max-width: 68px;
+  word-break: break-word;
+  line-height: 1.2;
 }
 
-/* ─── Content ─── */
+/* ─── Content Area ─── */
 .content {
   flex: 1;
   background: var(--white);
-  padding: 20px;
+  padding: 14px;
   overflow-y: auto;
+  min-width: 0;
 }
 
+/* ─── Category Grid ─── */
+/* Mobile: 3 columns, fluid */
 .categoryGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 32px 24px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px 8px;
 }
 
 .catCard {
@@ -121,30 +145,27 @@
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  width: 100%;
+  gap: 6px;
 }
 
 .catImageWrapper {
   position: relative;
-  width: 300px;
-  height: 300px;
-  background: #f8f8f8;
-  border: 1px solid #eee;
-  border-radius: 24px; /* Slightly more rounded for larger size */
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--bg-alt);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 10px;
-  overflow: visible;
-  transition: all 0.3s ease;
-  padding: 4px;
+  overflow: hidden;
+  transition: all 0.25s ease;
 }
 
 .catCard:hover .catImageWrapper {
-  border-color: #f97316;
-  background: #fff;
-  box-shadow: 0 6px 18px rgba(249, 115, 22, 0.12);
-  transform: translateY(-3px);
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.15);
+  transform: translateY(-2px);
 }
 
 .catImageWrapper img {
@@ -156,117 +177,95 @@
 
 .cubeBadge {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #f97316;
-  color: white;
-  font-size: 0.75rem;
-  width: 26px;
-  height: 26px;
+  top: -6px;
+  right: -6px;
+  background: var(--primary);
+  color: var(--secondary);
+  font-size: 0.65rem;
+  font-weight: 800;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  border: 2.5px solid var(--white);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border: 2px solid var(--white);
   z-index: 2;
 }
 
 .catName {
-  font-size: 0.75rem;
-  color: #333;
+  font-size: 0.7rem;
+  color: var(--text);
   text-align: center;
   font-weight: 600;
   line-height: 1.2;
-  max-width: 90px;
+  max-width: 100%;
   word-wrap: break-word;
 }
 
+/* ─── Coming Soon ─── */
 .comingSoon {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 200px;
   text-align: center;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .placeholderIcon {
-  font-size: 3rem;
-  margin-bottom: 16px;
+  font-size: 2.5rem;
+  margin-bottom: 12px;
   opacity: 0.5;
 }
 
-.comingSoon p {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #444;
-  margin-bottom: 4px;
-}
-
-.comingSoon span {
-  font-size: 0.85rem;
-  opacity: 0.7;
-}
-
-.inPanel {
-  height: auto;
-  background: transparent;
-}
-
-.inPanel .mainLayout {
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #eee;
-  background: var(--white);
-}
-
-/* ─── Special Tabs Content ─── */
+/* ─── Special Products Grid ─── */
 .specialProductsGrid {
-  padding: 10px;
+  padding: 0;
 }
 
 .tabHeader {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .tabHeader h2 {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: var(--secondary);
   margin-bottom: 4px;
 }
 
 .tabHeader p {
-  font-size: 0.9rem;
-  color: #888;
+  font-size: 0.82rem;
+  color: var(--text-muted);
 }
 
-.specialProductsGrid .grid {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
+/* Product Mini Card */
 .productMiniCard {
-  background: #fcfcfc;
-  border: 1px solid #eee;
-  border-radius: 16px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 .productMiniCard:hover {
   border-color: var(--primary);
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
 }
 
 .miniImgWrapper {
   position: relative;
   aspect-ratio: 1;
-  background: #fff;
+  background: var(--bg-alt);
 }
 
 .miniImgWrapper img {
@@ -277,57 +276,118 @@
 
 .miniBadge {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
   background: var(--primary);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.7rem;
+  color: var(--secondary);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.65rem;
   font-weight: 700;
 }
 
 .miniInfo {
-  padding: 12px;
+  padding: 10px;
 }
 
 .miniInfo h4 {
-  font-size: 0.9rem;
-  color: #333;
-  margin-bottom: 8px;
+  font-size: 0.8rem;
+  color: var(--text);
+  margin-bottom: 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: var(--font-sans);
+  font-weight: 500;
 }
 
 .miniPrice {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .currentPrice {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #f97316;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--secondary);
 }
 
 .oldPrice {
-  font-size: 0.8rem;
-  color: #999;
+  font-size: 0.75rem;
+  color: var(--text-muted);
   text-decoration: line-through;
 }
 
-@media (max-width: 480px) {
+/* inPanel modifier */
+.inPanel {
+  min-height: auto;
+}
+
+.inPanel .mainLayout {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--white);
+}
+
+/* ─── Tablet & Desktop ─── */
+@media (min-width: 480px) {
+  .sidebar {
+    width: 110px;
+  }
+
+  .sidebarItem {
+    font-size: 0.7rem;
+    padding: 14px 10px;
+  }
+
   .categoryGrid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px 8px;
+    gap: 16px 12px;
   }
+
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (min-width: 768px) {
   .sidebar {
-    width: 100px;
+    width: 130px;
   }
-  .sidebarItem {
-    font-size: 0.8rem;
-    padding: 14px 10px;
+
+  .content {
+    padding: 20px;
+  }
+
+  .categoryGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px 16px;
+  }
+
+  .catName {
+    font-size: 0.78rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    width: 140px;
+  }
+
+  .categoryGrid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

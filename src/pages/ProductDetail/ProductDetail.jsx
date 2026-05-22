@@ -122,18 +122,20 @@ const ProductDetail = () => {
           </p>
 
           <div className={styles.actions}>
-            <div className={styles.quantity}>
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
-              <span>{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)}>+</button>
+            <div className={styles.topActions}>
+              <div className={styles.quantity}>
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                <span>{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)}>+</button>
+              </div>
+              <button className={`${styles.addToCart} ${added ? styles.added : ''}`} onClick={handleAddToCart}>
+                <ShoppingCart size={20} /> {added ? 'Əlavə edildi!' : 'Səbətə At'}
+              </button>
+              <button className={`${styles.wishlist} ${isLiked ? styles.active : ''}`} onClick={() => toggleWishlist(product)}>
+                <Heart size={24} fill={isLiked ? "var(--error)" : "none"} color={isLiked ? "var(--error)" : "currentColor"} />
+              </button>
             </div>
-            <button className={`${styles.addToCart} ${added ? styles.added : ''}`} onClick={handleAddToCart}>
-              <ShoppingCart size={20} /> {added ? 'Əlavə edildi!' : 'Səbətə At'}
-            </button>
             <button className={styles.orderNow} onClick={handleOrderNow}>Sifariş Et</button>
-            <button className={`${styles.wishlist} ${isLiked ? styles.active : ''}`} onClick={() => toggleWishlist(product)}>
-              <Heart size={24} fill={isLiked ? "var(--error)" : "none"} color={isLiked ? "var(--error)" : "currentColor"} />
-            </button>
           </div>
 
           <div className={styles.features}>

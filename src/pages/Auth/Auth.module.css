@@ -305,12 +305,20 @@
 }
 
 /* ─── Responsive ─── */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .leftPanel {
     display: none;
   }
 
   .rightPanel {
-    padding: 80px 24px 40px;
+    padding: 28px 20px 40px;
+  }
+
+  .formHeader h1 {
+    font-size: 1.6rem;
+  }
+
+  .submitBtn {
+    padding: 15px;
   }
 }

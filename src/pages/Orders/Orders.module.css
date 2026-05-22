@@ -185,3 +185,32 @@
   color: var(--primary);
   margin-left: 8px;
 }
+
+/* ─── Mobile ─── */
+@media (max-width: 640px) {
+  .ordersContainer {
+    padding: 16px;
+  }
+
+  .orderHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .progressTracker {
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin: 16px 0;
+  }
+
+  .progressStep {
+    min-width: 70px;
+  }
+
+  .orderFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

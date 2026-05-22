@@ -1,48 +1,48 @@
+/* ═══════════════════════════════════════════════════
+   RECENTLY VIEWED — Mobile-First
+   Horizontal scroll on all screen sizes
+═══════════════════════════════════════════════════ */
+
 .section {
-  padding: 80px 0;
-  background: linear-gradient(to bottom, var(--bg), var(--bg-offset));
-  position: relative;
+  padding: 32px 0;
+  background: var(--bg);
   overflow: hidden;
 }
 
-.bgDecor {
-  position: absolute;
-  top: -100px;
-  right: -100px;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
-  opacity: 0.5;
-  filter: blur(60px);
-  z-index: 0;
+[data-theme='dark'] .section {
+  background: var(--bg);
 }
 
 .header {
-  margin-bottom: 40px;
-  position: relative;
-  z-index: 1;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titleGroup {
+  flex: 1;
 }
 
 .title {
-  font-size: 2.2rem;
+  font-size: clamp(1.2rem, 4vw, 2rem);
   font-family: var(--font-serif);
   color: var(--secondary);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .subtitle {
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 0.82rem;
 }
 
+/* Horizontal scroll container */
 .scrollContainer {
   overflow-x: auto;
-  padding: 20px 0 40px;
-  margin: 0 -20px;
+  padding: 8px 0 16px;
+  margin: 0 -16px;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  position: relative;
-  z-index: 1;
 }
 
 .scrollContainer::-webkit-scrollbar {
@@ -51,28 +51,47 @@
 
 .scrollGrid {
   display: flex;
-  gap: 24px;
-  padding: 0 20px;
+  gap: 10px;
+  padding: 0 16px;
+  width: max-content;
 }
 
+/* Mobile card size: slightly smaller */
 .itemWrapper {
-  flex: 0 0 280px;
-  transition: transform 0.3s ease;
+  flex: 0 0 160px;
+  transition: transform 0.2s ease;
 }
 
-.itemWrapper:hover {
-  transform: translateY(-10px);
+/* Tablet+ */
+@media (min-width: 480px) {
+  .itemWrapper {
+    flex: 0 0 200px;
+  }
+
+  .scrollContainer {
+    margin: 0 -20px;
+  }
+
+  .scrollGrid {
+    padding: 0 20px;
+    gap: 14px;
+  }
 }
 
-[data-theme='dark'] .section {
-  background: linear-gradient(to bottom, #0a0a0a, #111);
-}
+@media (min-width: 768px) {
+  .section {
+    padding: 60px 0;
+  }
 
-[data-theme='dark'] .bgDecor {
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
-}
+  .itemWrapper {
+    flex: 0 0 240px;
+  }
 
-@media (max-width: 768px) {
-  .title { font-size: 1.8rem; }
-  .itemWrapper { flex: 0 0 240px; }
+  .scrollGrid {
+    gap: 20px;
+  }
+
+  .header {
+    margin-bottom: 32px;
+  }
 }
