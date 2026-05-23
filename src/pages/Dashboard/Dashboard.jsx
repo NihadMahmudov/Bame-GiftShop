@@ -5,7 +5,7 @@ import {
   LogOut, Store, TrendingUp, ShoppingBag, Eye, ImagePlus,
   ShoppingCart, Zap, Calendar, CheckCircle, Camera,
   Phone, MapPin, User, Users, Clock, MessageSquare, Check, Truck,
-  ChevronDown, ChevronUp, Mail, Search, Tag
+  ChevronDown, ChevronUp, Mail, Search, Tag, Menu, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
@@ -28,6 +28,7 @@ const Dashboard = () => {
   } = useProducts();
   const { orders, updateOrderStatus } = useOrders();
   const [activeTab, setActiveTab] = useState('Məhsullarım');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [form, setForm] = useState({
     name: '', price: '', oldPrice: '', category: 'decor',
     img: '', description: '', badge: '', collections: []
@@ -139,7 +140,93 @@ const Dashboard = () => {
 
   return (
     <div className={styles.page}>
-      {/* Sidebar */}
+      {/* Mobile Top Bar */}
+      <header className={styles.mobileHeader}>
+        <button className={styles.menuToggle} onClick={() => setIsMobileMenuOpen(true)}>
+          <Menu size={24} />
+        </button>
+        <div className={styles.sidebarLogo}>BAME<span>.</span></div>
+        <div className={styles.mobileAvatar} onClick={() => setIsMobileMenuOpen(true)}>
+          {user.name?.charAt(0).toUpperCase()}
+        </div>
+      </header>
+
+      {/* Slide Drawer for Mobile */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className={styles.drawerOverlay} 
+              onClick={() => setIsMobileMenuOpen(false)} 
+            />
+            <motion.aside 
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'tween', duration: 0.3 }}
+              className={styles.sidebarDrawer}
+            >
+              <div className={styles.drawerHeader}>
+                <div className={styles.sidebarLogo}>BAME<span>.</span></div>
+                <button className={styles.closeBtn} onClick={() => setIsMobileMenuOpen(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className={styles.storeInfo}>
+                <div className={styles.storeAvatar}>
+                  {user.name?.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <p className={styles.storeName}>{user.storeName}</p>
+                  <p className={styles.storeEmail}>{user.email}</p>
+                </div>
+              </div>
+
+              <nav className={styles.sideNav}>
+                {TABS.map(tab => (
+                  <button
+                    key={tab}
+                    className={`${styles.navItem} ${activeTab === tab ? styles.navActive : ''}`}
+                    onClick={() => {
+                      setActiveTab(tab);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    {tab === 'Məhsullarım' ? <Package size={18} /> : 
+                     tab === 'Sifarişlər' ? <ShoppingBag size={18} /> : 
+                     tab === 'Kateqoriyalar' ? <LayoutDashboard size={18} /> :
+                     tab === 'Analitika' ? <TrendingUp size={18} /> : 
+                     tab === 'Flaş Satış' ? <Zap size={18} /> : 
+                     tab === 'Rəylər' ? <MessageSquare size={18} /> : 
+                     tab === 'Müştərilər' ? <Users size={18} /> : 
+                     <PlusCircle size={18} />}
+                    {tab}
+                  </button>
+                ))}
+                <button 
+                  className={styles.navItem} 
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    navigate('/shop');
+                  }}
+                >
+                  <Store size={18} /> Mağazaya Bax
+                </button>
+              </nav>
+
+              <button className={styles.logoutBtn} onClick={() => { logout(); navigate('/'); }}>
+                <LogOut size={18} /> Çıxış
+              </button>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Desktop Sidebar (hidden on mobile via CSS) */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarLogo}>BAME<span>.</span></div>
 
@@ -1135,7 +1222,7 @@ const Dashboard = () => {
                   )}
                 </div>
               </motion.div>
-            ) }
+            )}
           </AnimatePresence>
         </div>
       </main>

@@ -304,14 +304,61 @@
   transform: translateY(-2px);
 }
 
+/* ─── Mobile Top Bar (shown only on mobile) ─── */
+.mobileTopBar {
+  display: none;
+}
+
 /* ─── Responsive ─── */
 @media (max-width: 767px) {
+  .page {
+    flex-direction: column;
+  }
+
+  .mobileTopBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--secondary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .mobileBackBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+    transition: var(--transition);
+  }
+
+  .mobileBackBtn:hover {
+    color: var(--primary);
+  }
+
+  .mobileLogo {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+
+  .mobileLogo span {
+    color: var(--primary);
+  }
+
   .leftPanel {
     display: none;
   }
 
   .rightPanel {
     padding: 28px 20px 40px;
+    flex: 1;
   }
 
   .formHeader h1 {

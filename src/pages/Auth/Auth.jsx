@@ -41,6 +41,14 @@ const Auth = () => {
 
   return (
     <div className={styles.page}>
+      {/* Mobile Back Button (only shown when leftPanel is hidden) */}
+      <div className={styles.mobileTopBar}>
+        <Link to="/" className={styles.mobileBackBtn}>
+          <ArrowLeft size={18} /> Ana Səhifə
+        </Link>
+        <div className={styles.mobileLogo}>BAME<span>.</span></div>
+      </div>
+
       {/* Left Panel — Branding */}
       <div className={styles.leftPanel}>
         <div className={styles.brandContent}>
