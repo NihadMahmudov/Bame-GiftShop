@@ -43,8 +43,6 @@ const Navbar = () => {
 
   const navLinks = [
     { to: '/', label: 'Ana Səhifə', icon: <Home size={20} /> },
-    { to: '/categories', label: 'Kateqoriyalar', icon: <Compass size={20} /> },
-    { to: '/shop', label: 'Mağaza', icon: <ShoppingBag size={20} /> },
     { to: '/about', label: 'Haqqımızda', icon: <User size={20} /> },
     { to: '/contact', label: 'Əlaqə', icon: <Package size={20} /> },
   ];
@@ -85,18 +83,6 @@ const Navbar = () => {
             {/* Theme Toggle */}
             <button className={styles.iconBtn} onClick={toggleTheme} title={isDarkMode ? 'İşıqlı Rejim' : 'Qaranlıq Rejim'}>
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-
-            {/* Wishlist */}
-            <button className={styles.iconBtn} onClick={() => navigate('/wishlist')} aria-label="Bəyəndiklərim">
-              <Heart size={20} />
-              {wishlist.length > 0 && <span className={styles.cartCount}>{wishlist.length}</span>}
-            </button>
-
-            {/* Cart */}
-            <button className={styles.iconBtn} onClick={() => navigate('/cart')} aria-label="Səbət">
-              <ShoppingBag size={20} />
-              {cartItemCount > 0 && <span className={styles.cartCount}>{cartItemCount}</span>}
             </button>
 
             {/* User */}

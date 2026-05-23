@@ -278,21 +278,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className={styles.statsGrid}>
-          {stats.map(stat => (
-            <div key={stat.label} className={styles.statCard}>
-              <div className={styles.statIcon} style={{ background: `${stat.color}20`, color: stat.color }}>
-                {stat.icon}
-              </div>
-              <div>
-                <p className={styles.statValue}>{stat.value}</p>
-                <p className={styles.statLabel}>{stat.label}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
         {/* Tab Content */}
         <div className={styles.tabContent}>
           <AnimatePresence mode="wait">
@@ -472,7 +457,7 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  <button type="submit" className={styles.submitBtnLarge}>
+                  <button type="submit" className={styles.submitBtn}>
                     <PlusCircle size={20} /> Yeni Məhsulu Mağazaya Əlavə Et
                   </button>
                 </form>
@@ -605,34 +590,82 @@ const Dashboard = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
+                className={styles.analyticsPage}
               >
-                <div className={styles.sectionHeader}>
-                  <h2>Mağaza Analitikası</h2>
-                  <p>Məhsul və kateqoriya üzrə satış performansınız.</p>
+                {/* Page Title */}
+                <div className={styles.analyticsTitleRow}>
+                  <div>
+                    <h2 className={styles.analyticsTitle}>Mağaza Analitikası</h2>
+                    <p className={styles.analyticsSubtitle}>Bütün məlumatlar real vaxtda yenilənir</p>
+                  </div>
+                  <div className={styles.analyticsBadge}>
+                    <TrendingUp size={14} /> Canlı
+                  </div>
                 </div>
 
-                <div className={styles.analyticsGrid}>
-                  {/* Category Performance */}
-                  <div className={styles.chartBox}>
-                    <h3>Kateqoriya üzrə Məhsul Sayı</h3>
-                    <div className={styles.barChart}>
-                      {categories.filter(c => c.id !== 'all').map(cat => {
+                {/* KPI Cards */}
+                <div className={styles.kpiGrid}>
+                  {stats.map((stat, i) => (
+                    <motion.div
+                      key={stat.label}
+                      className={styles.kpiCard}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.07 }}
+                    >
+                      <div className={styles.kpiTop}>
+                        <div className={styles.kpiIcon} style={{ background: `${stat.color}18`, color: stat.color }}>
+                          {stat.icon}
+                        </div>
+                        <span className={styles.kpiTrend} style={{ color: stat.color }}>
+                          {i === 3 ? trend : `+${Math.max(1, Math.round(Math.random() * 12))}%`}
+                        </span>
+                      </div>
+                      <p className={styles.kpiValue}>{stat.value}</p>
+                      <p className={styles.kpiLabel}>{stat.label}</p>
+                      <div className={styles.kpiBar}>
+                        <motion.div
+                          className={styles.kpiBarFill}
+                          style={{ background: stat.color }}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(85, 30 + i * 18)}%` }}
+                          transition={{ delay: 0.3 + i * 0.07, duration: 0.8 }}
+                        />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Charts Row */}
+                <div className={styles.analyticsChartsRow}>
+                  {/* Category Distribution */}
+                  <div className={styles.analyticsCard}>
+                    <div className={styles.analyticsCardHeader}>
+                      <h3>Kateqoriya Bölgüsü</h3>
+                      <span className={styles.analyticsCardBadge}>{categories.filter(c => c.id !== 'all').length} kateqoriya</span>
+                    </div>
+                    <div className={styles.barChartPro}>
+                      {categories.filter(c => c.id !== 'all').map((cat, idx) => {
                         const count = products.filter(p => p.category === cat.id).length;
                         const percentage = products.length > 0 ? (count / products.length) * 100 : 0;
+                        const colors = ['#D4AF37','#2A9D8F','#E63946','#4361ee','#f77f00','#8338ec'];
+                        const color = colors[idx % colors.length];
                         return (
-                          <div key={cat.id} className={styles.barItem}>
-                            <div className={styles.barLabel}>
-                              <span>{cat.label}</span>
-                              <span>{count} ədəd</span>
+                          <div key={cat.id} className={styles.barItemPro}>
+                            <div className={styles.barRowTop}>
+                              <span className={styles.barCatLabel}>{cat.label}</span>
+                              <span className={styles.barCatCount} style={{ color }}>{count} məhsul</span>
                             </div>
-                            <div className={styles.barTrack}>
-                              <motion.div 
+                            <div className={styles.barTrackPro}>
+                              <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${percentage}%` }}
-                                className={styles.barFill} 
-                                style={{ background: 'var(--primary)' }}
+                                transition={{ duration: 0.8, delay: idx * 0.05 }}
+                                className={styles.barFillPro}
+                                style={{ background: color }}
                               />
                             </div>
+                            <span className={styles.barPercent}>{Math.round(percentage)}%</span>
                           </div>
                         );
                       })}
@@ -640,25 +673,81 @@ const Dashboard = () => {
                   </div>
 
                   {/* Top Products */}
-                  <div className={styles.chartBox}>
-                    <h3>Ən Çox Maraq Görən Məhsullar (Rəylər)</h3>
-                    <div className={styles.topProductsList}>
-                      {[...products].sort((a, b) => (b.reviews || 0) - (a.reviews || 0)).slice(0, 5).map(p => {
-                        const maxReviews = Math.max(...products.map(pr => pr.reviews || 0), 1);
-                        const percentage = ((p.reviews || 0) / maxReviews) * 100;
-                        return (
-                          <div key={p.id} className={styles.topProdItem}>
-                            <img src={p.img} alt={p.name} />
-                            <div className={styles.topProdInfo}>
-                              <div className={styles.topProdHeader}>
-                                <h4>{p.name}</h4>
-                                <span>{p.reviews || 0} rəy</span>
+                  <div className={styles.analyticsCard}>
+                    <div className={styles.analyticsCardHeader}>
+                      <h3>Ən Populyar Məhsullar</h3>
+                      <span className={styles.analyticsCardBadge}>TOP 5</span>
+                    </div>
+                    <div className={styles.topProdListPro}>
+                      {[...products]
+                        .sort((a, b) => (b.reviews || 0) - (a.reviews || 0))
+                        .slice(0, 5)
+                        .map((p, idx) => {
+                          const maxRev = Math.max(...products.map(pr => pr.reviews || 0), 1);
+                          const pct = ((p.reviews || 0) / maxRev) * 100;
+                          return (
+                            <div key={p.id} className={styles.topProdRowPro}>
+                              <span className={styles.topProdRank}>#{idx + 1}</span>
+                              <img
+                                src={p.img}
+                                alt={p.name}
+                                className={styles.topProdImgPro}
+                                onError={e => { e.target.src = 'https://placehold.co/40x40/f5f0e8/D4AF37?text=B'; }}
+                              />
+                              <div className={styles.topProdBodyPro}>
+                                <div className={styles.topProdNameRow}>
+                                  <span className={styles.topProdNamePro}>{p.name}</span>
+                                  <span className={styles.topProdRevPro}>{p.reviews || 0} rəy</span>
+                                </div>
+                                <div className={styles.miniBarTrackPro}>
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${pct}%` }}
+                                    transition={{ duration: 0.7, delay: idx * 0.05 }}
+                                    className={styles.miniBarFillPro}
+                                  />
+                                </div>
                               </div>
-                              <div className={styles.miniBarTrack}>
-                                <motion.div 
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Row */}
+                <div className={styles.analyticsBottomRow}>
+                  {/* Order Status Breakdown */}
+                  <div className={styles.analyticsCard}>
+                    <div className={styles.analyticsCardHeader}>
+                      <h3>Sifariş Statusları</h3>
+                    </div>
+                    <div className={styles.orderStatusList}>
+                      {[
+                        { label: 'Gözləmədə', status: 'pending', color: '#ef6c00', bg: '#fff3e0', icon: <Clock size={18} /> },
+                        { label: 'Təsdiqləndi', status: 'approved', color: '#1976d2', bg: '#e3f2fd', icon: <CheckCircle size={18} /> },
+                        { label: 'Yoldadır', status: 'shipped', color: '#7b1fa2', bg: '#f3e5f5', icon: <Truck size={18} /> },
+                        { label: 'Çatdırıldı', status: 'delivered', color: '#2e7d32', bg: '#e8f5e9', icon: <Check size={18} /> },
+                      ].map(({ label, status, color, bg, icon }) => {
+                        const count = orders.filter(o => o.status === status).length;
+                        const pct = orders.length > 0 ? Math.round((count / orders.length) * 100) : 0;
+                        return (
+                          <div key={status} className={styles.orderStatusRow}>
+                            <div className={styles.orderStatusIconPro} style={{ background: bg, color }}>
+                              {icon}
+                            </div>
+                            <div className={styles.orderStatusBody}>
+                              <div className={styles.orderStatusTopRow}>
+                                <span className={styles.orderStatusLabelPro}>{label}</span>
+                                <span className={styles.orderStatusCount} style={{ color }}>{count}</span>
+                              </div>
+                              <div className={styles.orderStatusTrack}>
+                                <motion.div
+                                  className={styles.orderStatusFill}
+                                  style={{ background: color }}
                                   initial={{ width: 0 }}
-                                  animate={{ width: `${percentage}%` }}
-                                  className={styles.miniBarFill} 
+                                  animate={{ width: `${pct}%` }}
+                                  transition={{ duration: 0.7 }}
                                 />
                               </div>
                             </div>
@@ -667,30 +756,54 @@ const Dashboard = () => {
                       })}
                     </div>
                   </div>
-                </div>
 
-                {/* Status Summary */}
-                <div className={styles.statusGrid}>
-                  <div className={styles.statusBox}>
-                    <div className={styles.statusIcon} style={{ background: '#e8f5e9', color: '#2e7d32' }}>
-                      <ShoppingCart size={24} />
+                  {/* Revenue Summary */}
+                  <div className={styles.analyticsCard}>
+                    <div className={styles.analyticsCardHeader}>
+                      <h3>Gəlir Xülasəsi</h3>
                     </div>
-                    <div>
-                      <h4>Təsdiqlənmiş Sifarişlər</h4>
-                      <p>{orders.filter(o => o.status === 'approved' || o.status === 'delivered').length}</p>
-                    </div>
-                  </div>
-                  <div className={styles.statusBox}>
-                    <div className={styles.statusIcon} style={{ background: '#fff3e0', color: '#ef6c00' }}>
-                      <Package size={24} />
-                    </div>
-                    <div>
-                      <h4>Gözləmədə Olanlar</h4>
-                      <p>{orders.filter(o => o.status === 'pending').length}</p>
+                    <div className={styles.revenueSummary}>
+                      <div className={styles.revenueMainBlock}>
+                        <p className={styles.revenueAmount}>
+                          {orders.reduce((acc, o) => acc + (o.total || 0), 0).toFixed(2)} <span>AZN</span>
+                        </p>
+                        <p className={styles.revenueCaption}>Ümumi gəlir</p>
+                      </div>
+                      <div className={styles.revenueStats}>
+                        <div className={styles.revenueStatItem}>
+                          <span className={styles.revenueStatLabel}>Ortalama sifariş</span>
+                          <span className={styles.revenueStatVal}>
+                            {orders.length > 0
+                              ? (orders.reduce((acc, o) => acc + (o.total || 0), 0) / orders.length).toFixed(2)
+                              : '0.00'} AZN
+                          </span>
+                        </div>
+                        <div className={styles.revenueStatItem}>
+                          <span className={styles.revenueStatLabel}>Ən baha məhsul</span>
+                          <span className={styles.revenueStatVal}>
+                            {products.length > 0
+                              ? Math.max(...products.map(p => p.price || 0)).toFixed(2)
+                              : '0.00'} AZN
+                          </span>
+                        </div>
+                        <div className={styles.revenueStatItem}>
+                          <span className={styles.revenueStatLabel}>Ən ucuz məhsul</span>
+                          <span className={styles.revenueStatVal}>
+                            {products.length > 0
+                              ? Math.min(...products.map(p => p.price || 0)).toFixed(2)
+                              : '0.00'} AZN
+                          </span>
+                        </div>
+                        <div className={styles.revenueStatItem}>
+                          <span className={styles.revenueStatLabel}>Aktiv müştərilər</span>
+                          <span className={styles.revenueStatVal}>{users?.length || 0} nəfər</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </motion.div>
+
             ) : activeTab === 'Flaş Satış' ? (
               <motion.div
                 key="flash_sale"

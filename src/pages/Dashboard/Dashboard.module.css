@@ -1073,6 +1073,458 @@
   .statusGrid { grid-template-columns: 1fr 1fr; }
 }
 
+/* ═══════════════════════════════════════════════
+   PREMIUM ANALYTICS PAGE — Modern Dashboard Style
+═══════════════════════════════════════════════ */
+
+.analyticsPage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Title Row */
+.analyticsTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.analyticsTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--secondary);
+  font-family: var(--font-serif);
+  margin-bottom: 2px;
+}
+
+.analyticsSubtitle {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+}
+
+.analyticsBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(46, 125, 50, 0.1);
+  color: #2e7d32;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 50px;
+  border: 1px solid rgba(46, 125, 50, 0.2);
+}
+
+/* KPI Cards */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.kpiCard {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.kpiCard:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.kpiTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kpiIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpiTrend {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: rgba(0,0,0,0.04);
+  padding: 3px 8px;
+  border-radius: 50px;
+}
+
+.kpiValue {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--secondary);
+  line-height: 1;
+  font-family: var(--font-serif);
+}
+
+.kpiLabel {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.kpiBar {
+  height: 4px;
+  background: var(--bg-offset);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.kpiBarFill {
+  height: 100%;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+/* Charts Row (2 columns) */
+.analyticsChartsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Bottom Row (2 columns) */
+.analyticsBottomRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Analytics Card */
+.analyticsCard {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.analyticsCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.analyticsCardHeader h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--secondary);
+  font-family: var(--font-sans);
+}
+
+.analyticsCardBadge {
+  background: var(--bg-offset);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 50px;
+  color: var(--text-muted);
+}
+
+/* Pro Bar Chart */
+.barChartPro {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.barItemPro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.barRowTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.barCatLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.barCatCount {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.barTrackPro {
+  height: 8px;
+  background: var(--bg-offset);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.barFillPro {
+  height: 100%;
+  border-radius: 6px;
+  opacity: 0.85;
+}
+
+.barPercent {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Top Products Pro */
+.topProdListPro {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.topProdRowPro {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topProdRank {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  width: 22px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.topProdImgPro {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.topProdBodyPro {
+  flex: 1;
+  min-width: 0;
+}
+
+.topProdNameRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.topProdNamePro {
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.topProdRevPro {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.miniBarTrackPro {
+  height: 5px;
+  background: var(--bg-offset);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.miniBarFillPro {
+  height: 100%;
+  background: linear-gradient(90deg, #D4AF37, #B8962E);
+  border-radius: 4px;
+}
+
+/* Order Status List */
+.orderStatusList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orderStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.orderStatusIconPro {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.orderStatusBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.orderStatusTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.orderStatusLabelPro {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.orderStatusCount {
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.orderStatusTrack {
+  height: 6px;
+  background: var(--bg-offset);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.orderStatusFill {
+  height: 100%;
+  border-radius: 4px;
+  opacity: 0.8;
+}
+
+/* Revenue Summary */
+.revenueSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.revenueMainBlock {
+  background: linear-gradient(135deg, var(--secondary) 0%, #3a3a3a 100%);
+  border-radius: 14px;
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.revenueAmount {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--primary);
+  font-family: var(--font-serif);
+  line-height: 1;
+}
+
+.revenueAmount span {
+  font-size: 1rem;
+  font-weight: 600;
+  opacity: 0.8;
+  color: var(--primary);
+}
+
+.revenueCaption {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.6);
+  margin-top: 6px;
+}
+
+.revenueStats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.revenueStatItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.revenueStatItem:last-child {
+  border-bottom: none;
+}
+
+.revenueStatLabel {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.revenueStatVal {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--secondary);
+}
+
+/* Analytics Mobile Responsive */
+@media (max-width: 900px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .analyticsChartsRow {
+    grid-template-columns: 1fr;
+  }
+  .analyticsBottomRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .kpiCard {
+    padding: 14px;
+  }
+  .kpiValue {
+    font-size: 1.4rem;
+  }
+  .analyticsCard {
+    padding: 16px;
+  }
+}
+
+[data-theme='dark'] .kpiCard,
+[data-theme='dark'] .analyticsCard {
+  background: #141414;
+  border-color: #2a2a2a;
+}
+
+[data-theme='dark'] .revenueMainBlock {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+}
+
+
+
 .dateInput {
   width: 100%;
   max-width: 300px;
@@ -2183,15 +2635,16 @@
 
 /* ─── Premium Form Styles ─── */
 .premiumForm {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 20px;
 }
 
 @media (min-width: 900px) {
   .premiumForm {
-    flex-direction: row;
+    grid-template-columns: 1fr 1fr;
     gap: 28px;
+    align-items: start;
   }
 }
 
