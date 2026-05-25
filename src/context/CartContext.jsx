@@ -8,9 +8,27 @@ export const CartProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [discount, setDiscount] = useState(0);
+  const [appliedPromo, setAppliedPromo] = useState('');
+
   useEffect(() => {
     localStorage.setItem('bame_cart', JSON.stringify(cart));
   }, [cart]);
+
+  const applyPromoCode = (code) => {
+    // Simple mock promo code logic
+    if (code.toUpperCase() === 'BAME10') {
+      setDiscount(0.10); // 10% endirim
+      setAppliedPromo(code.toUpperCase());
+      return { success: true, message: 'Promo kod tətbiq edildi!' };
+    }
+    return { success: false, message: 'Yanlış və ya vaxtı keçmiş kod.' };
+  };
+
+  const removePromoCode = () => {
+    setDiscount(0);
+    setAppliedPromo('');
+  };
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -44,6 +62,8 @@ export const CartProvider = ({ children }) => {
 
   const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
+  const discountAmount = cartTotal * discount;
+  const finalTotal = cartTotal - discountAmount;
 
   return (
     <CartContext.Provider value={{
@@ -53,7 +73,12 @@ export const CartProvider = ({ children }) => {
       updateQuantity,
       clearCart,
       cartTotal,
-      cartItemCount
+      cartItemCount,
+      applyPromoCode,
+      removePromoCode,
+      appliedPromo,
+      discountAmount,
+      finalTotal
     }}>
       {children}
     </CartContext.Provider>

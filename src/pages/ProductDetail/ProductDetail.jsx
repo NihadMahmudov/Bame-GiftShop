@@ -7,6 +7,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useAuth } from '../../context/AuthContext';
 import RecentlyViewed from '../../components/home/RecentlyViewed';
+import ProductCard from '../../components/common/ProductCard/ProductCard';
 import styles from './ProductDetail.module.css';
 
 const ProductDetail = () => {
@@ -84,6 +85,10 @@ const ProductDetail = () => {
   }
 
   const isLiked = isInWishlist(product.id);
+  
+  const relatedProducts = products
+    .filter(p => p.category === product.category && p.id !== product.id)
+    .slice(0, 4);
 
   return (
     <div className={`container ${styles.page}`}>
@@ -198,6 +203,17 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
+
+      {relatedProducts.length > 0 && (
+        <div className={styles.relatedSection}>
+          <h2>Oxşar Məhsullar</h2>
+          <div className={styles.relatedGrid}>
+            {relatedProducts.map(p => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </div>
+      )}
 
       <RecentlyViewed />
     </div>

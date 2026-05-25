@@ -6,13 +6,15 @@ import { Trash2, Minus, Plus, MapPin, Phone } from 'lucide-react';
 import styles from './Cart.module.css';
 
 const Cart = ({ inPanel = false }) => {
-  const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart();
+  const { cart, removeFromCart, updateQuantity, clearCart, cartTotal, finalTotal, discountAmount, applyPromoCode, removePromoCode, appliedPromo } = useCart();
   const { addOrder } = useOrders();
   const { user } = useAuth();
   
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [promoInput, setPromoInput] = useState('');
+  const [promoMessage, setPromoMessage] = useState({ text: '', type: '' });
 
   const handleCheckout = () => {
     if (!user) {
@@ -30,7 +32,9 @@ const Cart = ({ inPanel = false }) => {
       address,
       phone,
       items: cart,
-      total: cartTotal
+      total: finalTotal,
+      discount: discountAmount,
+      promo: appliedPromo
     });
     
     setOrderSuccess(true);
@@ -98,9 +102,44 @@ const Cart = ({ inPanel = false }) => {
             <span>Çatdırılma:</span>
             <span>0.00 AZN</span>
           </div>
+
+          <div className={styles.promoSection}>
+            <div className={styles.promoInputWrapper}>
+              <input 
+                type="text" 
+                placeholder="Promo kod (Məs: BAME10)" 
+                value={promoInput}
+                onChange={(e) => setPromoInput(e.target.value)}
+                disabled={!!appliedPromo}
+              />
+              {!appliedPromo ? (
+                <button onClick={() => {
+                  const res = applyPromoCode(promoInput);
+                  setPromoMessage({ text: res.message, type: res.success ? 'success' : 'error' });
+                }}>Tətbiq et</button>
+              ) : (
+                <button onClick={() => {
+                  removePromoCode();
+                  setPromoInput('');
+                  setPromoMessage({ text: 'Promo kod silindi', type: 'info' });
+                }} className={styles.removePromoBtn}>Sil</button>
+              )}
+            </div>
+            {promoMessage.text && (
+              <p className={`${styles.promoMessage} ${styles[promoMessage.type]}`}>{promoMessage.text}</p>
+            )}
+          </div>
+
+          {discountAmount > 0 && (
+            <div className={`${styles.summaryRow} ${styles.discountRow}`}>
+              <span>Endirim ({appliedPromo}):</span>
+              <span>-{discountAmount.toFixed(2)} AZN</span>
+            </div>
+          )}
+
           <div className={`${styles.summaryRow} ${styles.totalRow}`}>
             <span>Yekun məbləğ:</span>
-            <span>{cartTotal.toFixed(2)} AZN</span>
+            <span>{finalTotal.toFixed(2)} AZN</span>
           </div>
 
           <div className={styles.checkoutForm}>

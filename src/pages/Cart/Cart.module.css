@@ -317,3 +317,46 @@
     gap: 16px;
   }
 }
+
+.promoSection {
+  margin: 15px 0;
+}
+
+.promoInputWrapper {
+  display: flex;
+  gap: 10px;
+}
+
+.promoInputWrapper input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.promoInputWrapper button {
+  padding: 10px 15px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.promoInputWrapper .removePromoBtn {
+  background: #ef4444;
+}
+
+.promoMessage {
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+.promoMessage.success { color: #10b981; }
+.promoMessage.error { color: #ef4444; }
+.promoMessage.info { color: #6b7280; }
+
+.discountRow {
+  color: #10b981;
+  font-weight: 500;
+}
