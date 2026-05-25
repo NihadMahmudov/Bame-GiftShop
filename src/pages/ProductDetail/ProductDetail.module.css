@@ -628,3 +628,27 @@
   font-weight: 600;
   text-decoration: underline;
 }
+
+.relatedSection {
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border, #eaeaea);
+}
+
+.relatedSection h2 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-family: var(--font-serif);
+  margin-bottom: 24px;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .relatedGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

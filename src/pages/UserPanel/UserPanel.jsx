@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Store, Heart, ShoppingCart, User as UserIcon, LogOut, Package, LayoutGrid, Menu, X, Home } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -17,7 +17,16 @@ const UserPanel = () => {
   const { cartItemCount } = useCart();
   const { wishlist } = useWishlist();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('kataloq');
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(() => {
+    return location.state?.activeTab || 'kataloq';
+  });
+
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const TABS = [
@@ -28,7 +37,7 @@ const UserPanel = () => {
     { id: 'orders', label: 'Sifarişlər', icon: <Package size={20} />, count: null }
   ];
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!user) {
       navigate('/login');
     }
@@ -178,7 +187,7 @@ const UserPanel = () => {
             {activeTab === 'categories' && <Categories inPanel={true} />}
             {activeTab === 'wishlist' && <Wishlist inPanel={true} />}
             {activeTab === 'cart' && <Cart inPanel={true} />}
-            {activeTab === 'orders' && <Orders />}
+            {activeTab === 'orders' && <Orders inPanel={true} />}
           </motion.div>
         </AnimatePresence>
       </main>

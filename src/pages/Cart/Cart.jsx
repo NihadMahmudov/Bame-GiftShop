@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useOrders } from '../../context/OrderContext';
 import { useAuth } from '../../context/AuthContext';
 import { Trash2, Minus, Plus, MapPin, Phone } from 'lucide-react';
+import AuthModal from '../../components/common/AuthModal/AuthModal';
 import styles from './Cart.module.css';
 
 const Cart = ({ inPanel = false }) => {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal, finalTotal, discountAmount, applyPromoCode, removePromoCode, appliedPromo } = useCart();
   const { addOrder } = useOrders();
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [promoInput, setPromoInput] = useState('');
   const [promoMessage, setPromoMessage] = useState({ text: '', type: '' });
 
   const handleCheckout = () => {
     if (!user) {
-      alert("Sifariş vermək üçün daxil olmalısınız.");
+      setShowAuthModal(true);
       return;
     }
     if (!address || !phone) {
@@ -49,6 +53,12 @@ const Cart = ({ inPanel = false }) => {
           <h2>Təbriklər! 🎉</h2>
           <p>Sifarişiniz Bame Adminə göndərildi.</p>
           <p>Təsdiqləndikdən sonra "Sifarişlərim" bölməsindən izləyə bilərsiniz.</p>
+          <button 
+            className={styles.ordersBtn}
+            onClick={() => navigate('/panel', { state: { activeTab: 'orders' } })}
+          >
+            Sifarişlərimə Bax
+          </button>
         </div>
       </div>
     );
@@ -171,6 +181,12 @@ const Cart = ({ inPanel = false }) => {
           <button className={styles.checkoutBtn} onClick={handleCheckout}>Sifarişi Tamamla</button>
         </div>
       </div>
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={(success) => setShowAuthModal(false)}
+        message="Sifariş vermək üçün hesabınıza daxil olun"
+      />
     </div>
   );
 };

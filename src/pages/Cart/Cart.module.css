@@ -360,3 +360,22 @@
   color: #10b981;
   font-weight: 500;
 }
+
+.ordersBtn {
+  background: linear-gradient(135deg, #D4AF37, #F5C842);
+  color: #1A1A1A;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin-top: 14px;
+  font-family: inherit;
+  transition: all 0.3s;
+}
+
+.ordersBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212,175,55,0.25);
+}

@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useOrders } from '../../context/OrderContext';
 import { Package, Clock, CheckCircle, Truck, MapPin } from 'lucide-react';
+import AuthModal from '../../components/common/AuthModal/AuthModal';
 import styles from './Orders.module.css';
 
-const Orders = () => {
+const Orders = ({ inPanel = false }) => {
   const { user } = useAuth();
   const { getOrdersByUser } = useOrders();
+  const [showAuthModal, setShowAuthModal] = useState(!user);
   const userOrders = getOrdersByUser(user?.email);
 
   const getStatusInfo = (status) => {
@@ -19,6 +21,27 @@ const Orders = () => {
     }
   };
 
+  // If not logged in, show lock screen
+  if (!user) {
+    return (
+      <>
+        <div className={styles.emptyOrders}>
+          <div className={styles.lockIcon}>🔒</div>
+          <h2>Sifarişlərinizə baxmaq üçün daxil olun</h2>
+          <p>Sifarişlərinizi izləmək və tarixçəni görmək üçün hesabınıza daxil olun.</p>
+          <button className={styles.loginBtn} onClick={() => setShowAuthModal(true)}>
+            Daxil Ol / Qeydiyyat
+          </button>
+        </div>
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          message="Sifarişlərinizi görmək üçün daxil olun"
+        />
+      </>
+    );
+  }
+
   if (userOrders.length === 0) {
     return (
       <div className={styles.emptyOrders}>
@@ -30,7 +53,7 @@ const Orders = () => {
   }
 
   return (
-    <div className={styles.ordersContainer}>
+    <div className={`${inPanel ? '' : 'container'} ${styles.ordersContainer} ${inPanel ? styles.inPanel : ''}`}>
       <h2 className={styles.pageTitle}>Sifarişlərim</h2>
       
       <div className={styles.ordersList}>
