@@ -4,19 +4,25 @@ import { Home, Compass, ShoppingBag, User, Heart } from 'lucide-react';
 import { useCart } from '../../../context/CartContext';
 import { useWishlist } from '../../../context/WishlistContext';
 import { useAuth } from '../../../context/AuthContext';
+import { useLanguage } from '../../../context/LanguageContext';
 import styles from './BottomBar.module.css';
 
 const BottomBar = () => {
   const { cartItemCount } = useCart();
   const { wishlist } = useWishlist();
   const { user } = useAuth();
+  const { t } = useLanguage();
+
+  if (!user || user.role === 'admin') {
+    return null;
+  }
 
   const navItems = [
-    { to: '/', icon: <Home size={22} />, label: 'Əsas' },
-    { to: '/categories', icon: <Compass size={22} />, label: 'Kateq.' },
-    { to: '/wishlist', icon: <Heart size={22} />, label: 'Sevimlilər', count: wishlist.length },
-    { to: '/cart', icon: <ShoppingBag size={22} />, label: 'Səbət', count: cartItemCount },
-    { to: user ? '/panel' : '/login', icon: <User size={22} />, label: user ? 'Hesabım' : 'Giriş' },
+    { to: '/', icon: <Home size={22} />, label: t('bottomBar.home') },
+    { to: '/categories', icon: <Compass size={22} />, label: t('bottomBar.categories') },
+    { to: '/wishlist', icon: <Heart size={22} />, label: t('bottomBar.wishlist'), count: wishlist.length },
+    { to: '/cart', icon: <ShoppingBag size={22} />, label: t('bottomBar.cart'), count: cartItemCount },
+    { to: user ? '/panel' : '/login', icon: <User size={22} />, label: user ? t('bottomBar.profile') : t('bottomBar.login') },
   ];
 
   return (

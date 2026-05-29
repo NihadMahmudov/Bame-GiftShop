@@ -3,10 +3,12 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import styles from './Hero.module.css';
 
 const Hero = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const handleDiscover = (e) => {
@@ -33,22 +35,21 @@ const Hero = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            Eksklüziv Hədiyyə Kolleksiyası
+            {t('hero.subtitle')}
           </motion.span>
           <motion.h1 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            Hər Bir Hədiyyə <br /> Bir <span>Hekayədir</span>
+            {t('hero.title1')} <br /> {t('hero.title2')} <span>{t('hero.titleHighlight')}</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
           >
-            Ən sevdikləriniz üçün unudulmaz və zərif hədiyyələrin ünvanı. 
-            Keyfiyyət və estetikamızla hər anı özəlləşdiririk.
+            {t('hero.desc')}
           </motion.p>
           <motion.div 
             className={styles.actions}
@@ -57,10 +58,10 @@ const Hero = () => {
             transition={{ delay: 0.9 }}
           >
             <button onClick={handleDiscover} className={styles.primaryBtn}>
-              Kolleksiyanı Kəşf Et <ArrowRight size={18} />
+              {t('hero.discoverBtn')} <ArrowRight size={18} />
             </button>
             <button className={styles.secondaryBtn}>
-              Haqqımızda
+              {t('hero.aboutBtn')}
             </button>
           </motion.div>
         </motion.div>

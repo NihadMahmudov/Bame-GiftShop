@@ -59,14 +59,51 @@ const GiftFinder = () => {
   const calculateResults = (finalAnswers) => {
     let filtered = [...products];
 
-    // Büdcə filtrı
-    if (finalAnswers.budget === 'low') filtered = filtered.filter(p => p.price <= 50);
-    else if (finalAnswers.budget === 'mid') filtered = filtered.filter(p => p.price > 50 && p.price <= 100);
-    else if (finalAnswers.budget === 'high') filtered = filtered.filter(p => p.price > 100);
+    // 1. Recipient filter
+    if (finalAnswers.recipient === 'woman') {
+      filtered = filtered.filter(p => ['jewelry', 'accessories', 'sets', 'candles'].includes(p.category));
+    } else if (finalAnswers.recipient === 'man') {
+      filtered = filtered.filter(p => ['accessories', 'decor', 'sets'].includes(p.category));
+    } else if (finalAnswers.recipient === 'child') {
+      filtered = filtered.filter(p => ['toys', 'decor'].includes(p.category));
+    } // 'all' ignores this filter
 
-    // Digər filtrlar (simulyasiya üçün random və ya bəzi açar sözlərə görə)
-    // Real layihədə data-da 'tags' olmalıdır
-    const recommendations = filtered.sort(() => 0.5 - Math.random()).slice(0, 3);
+    // 2. Budget filter
+    if (finalAnswers.budget === 'low') {
+      filtered = filtered.filter(p => p.price <= 50);
+    } else if (finalAnswers.budget === 'mid') {
+      filtered = filtered.filter(p => p.price > 50 && p.price <= 100);
+    } else if (finalAnswers.budget === 'high') {
+      filtered = filtered.filter(p => p.price > 100);
+    }
+
+    // 3. Style filter
+    const lowerName = (name) => name.toLowerCase();
+    let styleFiltered = filtered.filter(p => {
+      if (finalAnswers.style === 'minimal') return lowerName(p.name).includes('minimal') || lowerName(p.name).includes('zərif') || p.category === 'jewelry' || p.category === 'accessories';
+      if (finalAnswers.style === 'classic') return lowerName(p.name).includes('klassik') || p.category === 'candles' || p.category === 'sets';
+      if (finalAnswers.style === 'modern') return p.category === 'decor' || p.category === 'accessories' || lowerName(p.name).includes('premium');
+      if (finalAnswers.style === 'creative') return lowerName(p.name).includes('əl işi') || p.category === 'decor' || lowerName(p.name).includes('çiçəkli');
+      return true;
+    });
+
+    // If style filtering is too strict and returns empty, fall back to just budget + recipient
+    if (styleFiltered.length === 0) {
+      styleFiltered = filtered;
+    }
+
+    // If still empty, fall back to just budget
+    if (styleFiltered.length === 0) {
+      styleFiltered = [...products].filter(p => {
+        if (finalAnswers.budget === 'low') return p.price <= 50;
+        if (finalAnswers.budget === 'mid') return p.price > 50 && p.price <= 100;
+        if (finalAnswers.budget === 'high') return p.price > 100;
+        return true;
+      });
+    }
+
+    // Get 3 random recommendations
+    const recommendations = styleFiltered.sort(() => 0.5 - Math.random()).slice(0, 3);
     setResults(recommendations);
     setCurrentStep(STEPS.length); // Nəticə mərhələsinə keç
   };

@@ -6,6 +6,7 @@ import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { OrderProvider } from './context/OrderContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
 import Layout from './components/layout/Layout/Layout';
 import Home from './pages/Home/Home';
 import Shop from './pages/Shop/Shop';
@@ -30,39 +31,41 @@ function App() {
 
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <ProductProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <OrderProvider>
-                {!splashDone && <SplashScreen onFinish={handleSplashFinish} />}
-                <Router>
-                  <Routes>
-                    <Route path="/login" element={<Auth />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/panel" element={<UserPanel />} />
-                    <Route path="/*" element={
-                      <Layout>
-                        <Routes>
-                          <Route path="/" element={<Home />} />
-                          <Route path="/shop" element={<Shop />} />
-                          <Route path="/categories" element={<Categories />} />
-                          <Route path="/about" element={<About />} />
-                          <Route path="/contact" element={<Contact />} />
-                          <Route path="/cart" element={<Cart />} />
-                          <Route path="/wishlist" element={<Wishlist />} />
-                          <Route path="/product/:id" element={<ProductDetail />} />
-                          <Route path="/orders" element={<Orders />} />
-                        </Routes>
-                      </Layout>
-                    } />
-                  </Routes>
-                </Router>
-              </OrderProvider>
-            </WishlistProvider>
-          </CartProvider>
-        </ProductProvider>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <ProductProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <OrderProvider>
+                  {!splashDone && <SplashScreen onFinish={handleSplashFinish} />}
+                  <Router>
+                    <Routes>
+                      <Route path="/login" element={<Auth />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/panel" element={<UserPanel />} />
+                      <Route path="/*" element={
+                        <Layout>
+                          <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/shop" element={<Shop />} />
+                            <Route path="/categories" element={<Categories />} />
+                            <Route path="/about" element={<About />} />
+                            <Route path="/contact" element={<Contact />} />
+                            <Route path="/cart" element={<Cart />} />
+                            <Route path="/wishlist" element={<Wishlist />} />
+                            <Route path="/product/:id" element={<ProductDetail />} />
+                            <Route path="/orders" element={<Orders />} />
+                          </Routes>
+                        </Layout>
+                      } />
+                    </Routes>
+                  </Router>
+                </OrderProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </ProductProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

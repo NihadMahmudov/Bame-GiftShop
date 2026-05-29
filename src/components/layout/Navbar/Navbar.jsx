@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Menu, X, User, Heart, LogOut, Settings, Sun, Moon, Home, Compass, Package } from 'lucide-react';
+import { ShoppingBag, Menu, X, User, Heart, LogOut, Settings, Sun, Moon, Home, Compass, Package, Globe } from 'lucide-react';
 import { useCart } from '../../../context/CartContext';
 import { useWishlist } from '../../../context/WishlistContext';
 import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
+import { useLanguage } from '../../../context/LanguageContext';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
@@ -12,6 +13,7 @@ const Navbar = () => {
   const { wishlist } = useWishlist();
   const { user, logout, isAdmin } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
+  const { language, changeLanguage, t } = useLanguage();
   const navigate = useNavigate();
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -42,9 +44,9 @@ const Navbar = () => {
   const closeDrawer = () => setIsDrawerOpen(false);
 
   const navLinks = [
-    { to: '/', label: 'Ana Səhifə', icon: <Home size={20} /> },
-    { to: '/about', label: 'Haqqımızda', icon: <User size={20} /> },
-    { to: '/contact', label: 'Əlaqə', icon: <Package size={20} /> },
+    { to: '/', label: t('navbar.home'), icon: <Home size={20} /> },
+    { to: '/about', label: t('navbar.about'), icon: <User size={20} /> },
+    { to: '/contact', label: t('navbar.contact'), icon: <Package size={20} /> },
   ];
 
   return (
@@ -80,8 +82,21 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className={styles.navActions}>
+            {/* Language Toggle */}
+            <div className={styles.langSwitcher}>
+              <select 
+                value={language} 
+                onChange={(e) => changeLanguage(e.target.value)}
+                className={styles.langSelect}
+              >
+                <option value="az">AZ</option>
+                <option value="en">EN</option>
+                <option value="ru">RU</option>
+              </select>
+            </div>
+
             {/* Theme Toggle */}
-            <button className={styles.iconBtn} onClick={toggleTheme} title={isDarkMode ? 'İşıqlı Rejim' : 'Qaranlıq Rejim'}>
+            <button className={styles.iconBtn} onClick={toggleTheme} title={isDarkMode ? t('navbar.lightMode') : t('navbar.darkMode')}>
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
@@ -90,17 +105,17 @@ const Navbar = () => {
               <div className={styles.userMenu}>
                 <span className={styles.userName}>{user.name}</span>
                 {isAdmin && (
-                  <Link to="/dashboard" className={styles.adminBtn} title="Admin Panel">
+                  <Link to="/dashboard" className={styles.adminBtn} title={t('navbar.adminPanel')}>
                     <Settings size={20} />
                   </Link>
                 )}
-                <button onClick={handleLogout} className={styles.logoutBtn} title="Çıxış">
+                <button onClick={handleLogout} className={styles.logoutBtn} title={t('navbar.logout')}>
                   <LogOut size={20} />
                 </button>
               </div>
             ) : (
               <Link to="/login" className={styles.loginBtn}>
-                <User size={16} /> Giriş
+                <User size={16} /> {t('navbar.login')}
               </Link>
             )}
           </div>
@@ -137,13 +152,29 @@ const Navbar = () => {
             </NavLink>
           ))}
 
+          <div className={styles.drawerLink} style={{ justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <Globe size={20} />
+              Dil Seçimi
+            </div>
+            <select 
+              value={language} 
+              onChange={(e) => { changeLanguage(e.target.value); closeDrawer(); }}
+              style={{ padding: '5px', borderRadius: '5px', background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+            >
+              <option value="az">AZ</option>
+              <option value="en">EN</option>
+              <option value="ru">RU</option>
+            </select>
+          </div>
+
           <button
             className={styles.drawerLink}
             onClick={() => { toggleTheme(); closeDrawer(); }}
             style={{ border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
           >
             {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            {isDarkMode ? 'İşıqlı Rejim' : 'Qaranlıq Rejim'}
+            {isDarkMode ? t('navbar.lightMode') : t('navbar.darkMode')}
           </button>
         </nav>
 
@@ -161,16 +192,16 @@ const Navbar = () => {
               </div>
               {isAdmin && (
                 <Link to="/dashboard" onClick={closeDrawer} className={styles.drawerLoginBtn}>
-                  <Settings size={18} /> Admin Panel
+                  <Settings size={18} /> {t('navbar.adminPanel')}
                 </Link>
               )}
               <button className={styles.drawerLogout} onClick={handleLogout}>
-                <LogOut size={18} /> Çıxış
+                <LogOut size={18} /> {t('navbar.logout')}
               </button>
             </>
           ) : (
             <Link to="/login" onClick={closeDrawer} className={styles.drawerLoginBtn}>
-              <User size={18} /> Giriş / Qeydiyyat
+              <User size={18} /> {t('navbar.loginRegister')}
             </Link>
           )}
         </div>
