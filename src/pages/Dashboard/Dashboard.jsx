@@ -810,60 +810,70 @@ const Dashboard = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
+                className={styles.flashSaleContainer}
               >
-                <div className={styles.sectionHeader}>
-                  <h2>Flaş Satış İdarəetməsi</h2>
-                  <p>Məhsulları seçin və kampaniya vaxtını təyin edin.</p>
-                </div>
-
-                <div className={styles.flashSettings}>
-                  <div className={styles.settingBox}>
-                    <label><Calendar size={18} /> Satışın Bitmə Vaxtı</label>
-                    <input 
-                      type="datetime-local" 
-                      className={styles.dateInput}
-                      value={flashSale.targetDate.slice(0, 16)} 
-                      onChange={(e) => updateFlashSale({ targetDate: new Date(e.target.value).toISOString() })}
-                    />
+                <div className={styles.flashHeaderPro}>
+                  <div className={styles.flashHeaderLeft}>
+                    <div className={styles.flashIconBox}>
+                      <Zap size={24} />
+                    </div>
+                    <div>
+                      <h2>Flaş Satış İdarəetməsi</h2>
+                      <p>Məhsulları seçin və kampaniya vaxtını təyin edin.</p>
+                    </div>
+                  </div>
+                  <div className={styles.flashHeaderRight}>
+                    <div className={styles.flashTimeBox}>
+                      <label><Calendar size={16} /> Kampaniyanın Bitmə Vaxtı</label>
+                      <input 
+                        type="datetime-local" 
+                        className={styles.flashDateInput}
+                        value={flashSale.targetDate.slice(0, 16)} 
+                        onChange={(e) => updateFlashSale({ targetDate: new Date(e.target.value).toISOString() })}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className={styles.table}>
-                  <div className={styles.tableHeader}>
-                    <span>Məhsul</span>
-                    <span>Qiymət</span>
-                    <span>Kateqoriya</span>
-                    <span>Seçim</span>
+                <div className={styles.flashStatsRow}>
+                  <div className={styles.flashStatItem}>
+                    <span className={styles.flashStatLabel}>Seçilmiş Məhsullar</span>
+                    <span className={styles.flashStatVal}>{flashSale.productIds.length} <span className={styles.flashStatValSub}>/ {products.length}</span></span>
                   </div>
-                  <div className={styles.tableBody}>
-                    {products.map(product => {
-                      const isSelected = flashSale.productIds.includes(product.id);
-                      return (
-                        <div 
-                          key={product.id} 
-                          className={`${styles.tableRow} ${isSelected ? styles.rowSelected : ''}`}
-                          onClick={() => {
-                            const newIds = isSelected
-                              ? flashSale.productIds.filter(id => id !== product.id)
-                              : [...flashSale.productIds, product.id];
-                            updateFlashSale({ productIds: newIds });
-                          }}
-                        >
-                          <div className={styles.productCell}>
-                            <img src={product.img} alt="" />
-                            <span>{product.name}</span>
+                  <div className={styles.flashStatItem}>
+                    <span className={styles.flashStatLabel}>Status</span>
+                    <span className={styles.flashStatVal} style={{color: '#10b981'}}>Aktiv</span>
+                  </div>
+                </div>
+
+                <div className={styles.flashProductsGrid}>
+                  {products.map(product => {
+                    const isSelected = flashSale.productIds.includes(product.id);
+                    return (
+                      <div 
+                        key={product.id} 
+                        className={`${styles.flashProductCard} ${isSelected ? styles.flashProductSelected : ''}`}
+                        onClick={() => {
+                          const newIds = isSelected
+                            ? flashSale.productIds.filter(id => id !== product.id)
+                            : [...flashSale.productIds, product.id];
+                          updateFlashSale({ productIds: newIds });
+                        }}
+                      >
+                        <div className={styles.flashImgWrapper}>
+                          <img src={product.img} alt={product.name} onError={e => { e.target.src = 'https://placehold.co/200x200/f5f0e8/D4AF37?text=B'; }} />
+                          <div className={styles.flashCheckOverlay}>
+                            {isSelected ? <CheckCircle size={32} className={styles.flashCheckIcon} /> : <div className={styles.flashEmptyCircle}></div>}
                           </div>
-                          <span className={styles.priceCell}>{product.price} AZN</span>
-                          <span>{categories.find(c => c.id === product.category)?.label}</span>
-                          <span className={styles.checkCell}>
-                            <div className={`${styles.customCheck} ${isSelected ? styles.checked : ''}`}>
-                              {isSelected && <CheckCircle size={16} />}
-                            </div>
-                          </span>
                         </div>
-                      );
-                    })}
-                  </div>
+                        <div className={styles.flashProductInfo}>
+                          <span className={styles.flashProductCat}>{categories.find(c => c.id === product.category)?.label}</span>
+                          <h4 className={styles.flashProductName}>{product.name}</h4>
+                          <span className={styles.flashProductPrice}>{product.price} AZN</span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </motion.div>
             ) : activeTab === 'Rəylər' ? (
